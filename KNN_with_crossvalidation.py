@@ -47,9 +47,19 @@ def is_correct(pred,y_test):# returns percent of correct predictions
     return percent_correct
 
 def PCA_func(input_data,dims): #for 2d data with one observation per row. not really neccesary to have as function
-    pca = PCA(n_components=dims, svd_solver='full')
+    pca = PCA(n_components=dims, svd_solver='auto')
     pca.fit(input_data)
     return pca
+
+def downsample(data_matrix, factor):
+    nrow, ncol = np.shape(data_matrix)
+    niterations = int(np.floor(ncol/factor))
+    new_data_matrix = np.zeros((nrow,niterations))
+    for i in range(niterations):
+        new_data_matrix[:,i] = data_matrix[:,i*factor]
+    return new_data_matrix
+        
+    
 
 os.chdir('C:/Users/Ralle/Desktop/Advanced Machine Learning Project/AML/Nicolai/data')#
 
@@ -83,16 +93,17 @@ normal_data_all = preprocessing.scale(full_data_matrix)#normalize
 
 ###################################Cut off some data
 ##downsample:
-####???????
+####
+data_downsampled = downsample(normal_data_all,100)
 
-pca = PCA_func(normal_data_all, 100)#PCA with 100 components
-normal_data = pca.transform(normal_data_all)#transform data to 100 components
+pca = PCA_func(data_downsampled, 10)#PCA with xx components
+normal_data = pca.transform(data_downsampled)#transform data to xx components
+normal_data = data_downsampled
 binary_classes = binary_classes_all
 
 
 
 ##KNN 2 layer crossvalidation
-
 
 
 n_models = 10
@@ -125,7 +136,7 @@ for train_index, test_index in kf.split(normal_data): #makes the outer split one
             #print('\t \t training models loop started')
             n_neigh = i+1
             #train
-            KNN_model = KNeighborsClassifier(n_neighbors=n_neigh)
+            KNN_model = KNeighborsClassifier(n_neighbors=n_neigh,p=1)#p is mahalanobis distance parameter
             KNN_model.fit(inner_trainX,inner_trainY) 
             #validate
             pred = KNN_model.predict(inner_testX)
@@ -144,3 +155,6 @@ for train_index, test_index in kf.split(normal_data): #makes the outer split one
 print('test error after all loops')
 print(test_err)
 
+#Test err = 0.4447 with downsampling factor 3. PCA 50. 1-10 neigh. 10outer and inner splits at random
+#Test err = 0.4527 with downsampling factor 3. PCA 10. 1-10 neigh. 10outer and inner splits at random
+#same with mahalanobis=1
