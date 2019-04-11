@@ -11,6 +11,7 @@ import scipy.io
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+from sklearn.metrics.pairwise import cosine_similarity
 
 def mean_all_class(data, class_vector):
     n_images, n_samples  = np.shape(data)
@@ -45,16 +46,16 @@ def concat_channels(eeg_events):#channels*EEG_value*img
         concat_all[i] = concat_row
     return concat_all #[n_img*17600]
 
-def corr_coeff_image(data):
-    n_classes = np.size(data[0,:])
-    for i in range(n_classes):
-        for j in range(n_classes):
+#def corr_coeff_image(data):
+#    n_classes = np.size(data[0,:])
+#    for i in range(n_classes):
+#        for j in range(n_classes):
             
             
 
 
 os.chdir('C:/Users/Ralle/Desktop/Advanced Machine Learning Project/AML/Nicolai/data')#
-
+nsubjects = 15
 
 full_data_matrix = []
 full_class_array = []
@@ -73,10 +74,15 @@ for i in range(nsubjects):
 
 mean_data, classes = mean_all_class(full_data_matrix, full_class_array)
 
-image = np.corrcoef(mean_data, mean_data,rowvar = 1)
+#corrcoef:
+#image = np.corrcoef(mean_data, mean_data,rowvar = 1)
+
+#Cosine:
+image = cosine_similarity(mean_data)
+
 plt.figure()
-plt.xticks(range(23),classes,rotation = 60)
-plt.yticks(range(23),classes,rotation = 60)
+plt.xticks(range(23),classes,rotation = 90)
+plt.yticks(range(23),classes,rotation = 0)
 plt.imshow(image[0:23,0:23])
 plt.title('Correlation between mean EEG of classes')
 plt.show()
@@ -97,7 +103,8 @@ for i in range(15):
     person_number = i
     mean_data, classes = mean_all_class(full_data_matrix[(0+person_number*690):(690+person_number*690)], full_class_array[0:690])
 
-    image = np.corrcoef(mean_data, mean_data,rowvar = 1)
+    #image = np.corrcoef(mean_data, mean_data,rowvar = 1)
+    image = cosine_similarity(mean_data)
     plt.figure()
     plt.xticks(range(23),classes,rotation = 90)
     plt.yticks(range(23),classes,rotation = 0)

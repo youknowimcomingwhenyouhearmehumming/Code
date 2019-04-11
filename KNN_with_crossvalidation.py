@@ -39,9 +39,7 @@ def is_correct(pred,y_test):# returns percent of correct predictions
     n = np.size(y_test)
     percent_correct = 0
     for i in range(n):
-        if (y_test[i] == 1) and (pred[i] > 0.5):
-            percent_correct += 1
-        elif (y_test[i] == 0) and (pred[i] <= 0.5):
+        if (y_test[i] == pred[i]):
             percent_correct += 1
     percent_correct = percent_correct/n
     return percent_correct
@@ -80,26 +78,26 @@ for i in range(nsubjects):
     concat_data = concat_channels(data)
     if i == 0:
         full_data_matrix = concat_data
-        full_class_array = image_order[:,0]
+        full_class_array = image_order[:,1]
     else:
         full_data_matrix  = np.concatenate((full_data_matrix,concat_data))
-        full_class_array  = np.concatenate((full_class_array,image_order[:,0]))
+        full_class_array  = np.concatenate((full_class_array,image_order[:,1]))
 
 ##Task 2: Normalize
 #Classes to 0 and 1
-binary_classes_all = is_animal(full_class_array)
+####binary_classes_all = is_animal(full_class_array)
 #Normalize data
 normal_data_all = preprocessing.scale(full_data_matrix)#normalize
 
 ###################################Cut off some data
 ##downsample:
 ####
-data_downsampled = downsample(normal_data_all,100)
+data_downsampled = downsample(normal_data_all,5)
 
 pca = PCA_func(data_downsampled, 10)#PCA with xx components
 normal_data = pca.transform(data_downsampled)#transform data to xx components
-normal_data = data_downsampled
-binary_classes = binary_classes_all
+#normal_data = data_downsampled
+all_classes = full_class_array
 
 
 
@@ -112,15 +110,15 @@ n_inner_splits = 10
 #K_neighbours from 1 to 10
 kf = KFold(n_splits=n_outer_splits, shuffle = True)
 kf.get_n_splits(normal_data)
-nsamples = np.size(binary_classes)
+nsamples = np.size(all_classes)
 test_err = 0
 for train_index, test_index in kf.split(normal_data): #makes the outer split one subject left out
     print('outer loop started')
     E_gen_s = np.zeros((n_models,1))
     outer_trainX = normal_data[train_index,:]
     outer_testX = normal_data[test_index,:]
-    outer_trainY = binary_classes[train_index]
-    outer_testY = binary_classes[test_index]
+    outer_trainY = all_classes[train_index]
+    outer_testY = all_classes[test_index]
     kf_inner = KFold(n_splits=n_inner_splits, shuffle = True)#Maybe shuffle on # one subject left out
     kf_inner.get_n_splits(outer_trainX)
     nDtest = np.size(outer_testY)
@@ -158,3 +156,4 @@ print(test_err)
 #Test err = 0.4447 with downsampling factor 3. PCA 50. 1-10 neigh. 10outer and inner splits at random
 #Test err = 0.4527 with downsampling factor 3. PCA 10. 1-10 neigh. 10outer and inner splits at random
 #same with mahalanobis=1
+#testErr = 0.9484. downsample factor 5. PCA=10. 10,10 random splits p=1, 
