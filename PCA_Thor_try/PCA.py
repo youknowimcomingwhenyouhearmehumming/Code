@@ -10,7 +10,7 @@ os.chdir('C:\Users\Bruger\Documents\Uni\Advanche machine learning\Projekt\data_n
 mat_contents = sio.loadmat('eeg_events.mat')
 data=mat_contents['eeg_events']
 reshaped_data=data.reshape(32*550,690)
-reshaped_data=np.transpose(reshaped_data)
+#reshaped_data=np.transpose(reshaped_data)
 
 """
 --------------------------Task 1   PCA -----------------------------------------------------------------
