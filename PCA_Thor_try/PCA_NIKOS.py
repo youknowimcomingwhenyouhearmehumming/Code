@@ -4,7 +4,6 @@ Created on Thu Mar  7 20:37:43 2019
 
 @author: nikos
 """
-import mne
 import numpy as np
 import scipy.io as sio
 import sklearn as sk
@@ -13,7 +12,7 @@ import matplotlib.pyplot as plt
 import os
 plt.close('all') 
 
-os.chdir('C:\Users\Bruger\Documents\Uni\Advanche machine learning\Projekt\data_nikolai\Nicolai\data\exp1')
+os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/data_nikolai/Nicolai/data/exp1')
 
 mat_data_subject1=sio.loadmat('eeg_events.mat')
 mat_data_semantics1=sio.loadmat('image_semantics.mat')
@@ -43,7 +42,9 @@ print(np.sum(pca.explained_variance_ratio_))
 """
 -------------the first 100 and then all 690 eigenvectors are saved
 """
-os.chdir('C:\Users\Bruger\Documents\Uni\Advanche machine learning\Projekt\Code\PCA_Thor_try')
+
+os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt\Code\PCA_Thor_try')
+
 pca.components_.dump("first_100_eigenvectors.dat") #Now the file .dat is saved to the open folder
 #loaded_array = numpy.load("my_matrix.dat") #This import the file again
 
@@ -61,7 +62,7 @@ qutient_100=np.zeros(100)
 for i in range(100):
     print(i)
     qutient_100[i]=sum(pca.explained_variance_ratio_[0:i])*100  
-print qutient_100[-1]
+print (qutient_100[-1])
 fig, ax1=plt.subplots(figsize=(9, 6)) 
 ax1.plot(qutient_100,'.', color='b')
 ax1.tick_params(axis='both', which='major', labelsize=12)
