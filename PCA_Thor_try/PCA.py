@@ -5,12 +5,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 plt.close('all') 
 
-os.chdir('C:\Users\Bruger\Documents\Uni\Advanche machine learning\Projekt\data_nikolai\Nicolai\data\exp1')
+os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/data_nikolai/Nicolai/data/exp1')
 
 mat_contents = sio.loadmat('eeg_events.mat')
 data=mat_contents['eeg_events']
 reshaped_data=data.reshape(32*550,690)
-reshaped_data=np.transpose(reshaped_data)
+#reshaped_data=np.transpose(reshaped_data)
 
 """
 --------------------------Task 1   PCA -----------------------------------------------------------------
@@ -58,7 +58,7 @@ qutient_100=np.zeros(100)
 for i in range(100):
     print(i)
     qutient_100[i]=sum(eigensvalues_sorted[0:i])/sum(eigensvalues_sorted[0:k])*100  
-print qutient_100[-1]
+print (qutient_100[-1])
 fig, ax1=plt.subplots(figsize=(9, 6)) 
 ax1.plot(qutient_100,'.', color='b')
 ax1.tick_params(axis='both', which='major', labelsize=12)
@@ -72,7 +72,7 @@ ax1.legend(loc='upper right')
 qutient_500=np.zeros(500)
 for i in range(500):
     qutient_500[i]=sum(eigensvalues_sorted[0:i])/sum(eigensvalues_sorted[0:k])*100  
-print qutient_500[-1]
+print (qutient_500[-1])
 fig, ax1=plt.subplots(figsize=(9, 6)) 
 ax1.plot(qutient_500,'.', color='b')
 ax1.tick_params(axis='both', which='major', labelsize=12)

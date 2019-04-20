@@ -1,4 +1,3 @@
-from __future__ import print_function
 import scipy.io
 import numpy as np
 #from sklearn.neighbors import KNeighborsRegressor
@@ -13,7 +12,7 @@ from sklearn import preprocessing
 import os
 
 plt.close('all')
-os.chdir('C:\Users\Bruger\Documents\Uni\Advanche machine learning\Projekt\data_nikolai\Nicolai\data\exp1')
+os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/data_nikolai/Nicolai/data/exp1')
 
 
 def concat_channels(eeg_events):#channels*EEG_value*img
@@ -77,7 +76,7 @@ y_train = is_animal(y_train_string)
 y_test = is_animal(y_test_string)
 
  
-runs=10
+runs=1
 weighted_average=np.zeros(runs)
 for i in range(runs):
     mlp = MLPClassifier(hidden_layer_sizes=(13,13,13),max_iter=200)
