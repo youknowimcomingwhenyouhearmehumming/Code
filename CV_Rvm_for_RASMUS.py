@@ -204,7 +204,8 @@ def data_preparation():
 ##########################################################################################################################################
 ###########################################################################################################################################################
     return (tot,d_tot)
-tot,d_tot=data_preparation()
+#tot,d_tot=data_preparation()
+    
 
 #create function to get the transformed labels for classification, 1 for animal, 0 else
 def Animal_label(labels):
@@ -228,6 +229,9 @@ def Animal_label(labels):
         
 
 
+## RASMUS WAS HERE:
+tot = full_class_array
+d_tot = full_data_matrix
 
 
 
@@ -276,8 +280,8 @@ for i in range(len(width)):
         X_train1, X_test1 = X_train[train_index], X_train[test_index]
         y_train1, y_test1 =y_train[train_index], y_train[test_index]
         clf1=RVC(kernel='rbf',coef1=width[i])
-        clf1.fit(X_train,y_train)
-        score=score+clf1.score(X_test,y_test) 
+        clf1.fit(X_train1,y_train1)
+        score=score+clf1.score(X_test1,y_test1) 
     score_width[i,0]=score
     score_width[i,1]=width[i]
 #########################################################################################################
