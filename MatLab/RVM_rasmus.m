@@ -1,7 +1,10 @@
+
+
 clear
 close all
 
 chdir('C:/Users/Ralle/Desktop/Advanced Machine Learning Project/AML/Nicolai/data');
+addpath('C:\Users\Ralle\Desktop\Advanced Machine Learning Project\iqiukp-Relevance-Vector-Machine-c7724af')
 datap1 = load('exp1/eeg_events');
 data = datap1(1).eeg_events;
 [n_channels, n_samples, n_images] = size(datap1(1).eeg_events);
@@ -19,24 +22,12 @@ for p = 1:n_subjects
     end
 end
 
-max_n_coeff = 50;
-AIC_matrix = zeros(length(full_data(:,1)),max_n_coeff);
-
-for j = 1:max_n_coeff
-    for i = 1:length(full_data(:,1))
-        th = ar(full_data(i,:),j,'burg');
-        AIC_matrix(i,j) = aic(th);
-    end
-    j
-end
-%th = ar(new_data(1,:),n_coeffs)
-%getcov(th)
-%polydata(th)
-%getpvec(th)%???
-%b = aic(th)
 %%
-mean_AIC = mean(AIC_matrix,1);
-figure()
-plot(mean_AIC,'linewidth',3)
-xlabel('number of coefficients')
-title('mean AIC value')
+p1_data = full_data(1:690,:);
+
+%%
+ndims = 10;
+[COEFF,SCORE] = pca(p1_data,'NumComponents',ndims);
+pca_data = SCORE(:,1:ndims);
+
+%%
