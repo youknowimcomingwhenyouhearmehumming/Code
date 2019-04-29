@@ -84,22 +84,29 @@ plt.legend(['Cumulative variance explained','95%'])
 plt.show()
 
 ############################ PCA_ 655 components holds 95% of variance
+pca = PCA(svd_solver='auto', n_components = 655)#PCA with all components
+pca.fit(full_normalized_array)
+full_normPCA_array = pca.transform(full_normalized_array)
+
+############################ PCA_ 128 components holds 75% of variance
+pca = PCA(svd_solver='auto', n_components = 128)#PCA with all components
+pca.fit(full_normalized_array)
 full_normPCA_array = pca.transform(full_normalized_array)
 
 
 ############################ CREATE TEST AND TRAINING FOR THE MODELS
-X_train, X_test, train_index, test_index = train_test_split(full_normPCA_array,range(np.size(full_isAnimal_array)),test_size=0.20)
+#X_train, X_test, train_index, test_index = train_test_split(full_normPCA_array,range(np.size(full_isAnimal_array)),test_size=0.20)
 
 os.chdir('C:/Users/Ralle/Documents/GitHub/AdvancedMachineLearning/KNN_SVM_RNN_new_data')
 
-with open("train_indexes.txt", "wb") as fp:   #Pickling
-    pickle.dump(train_index, fp)
+#with open("train_indexes.txt", "wb") as fp:   #Pickling
+#    pickle.dump(train_index, fp)
 
-with open("test_indexes.txt", "wb") as fp:   #Pickling
-    pickle.dump(test_index, fp)
+#with open("test_indexes.txt", "wb") as fp:   #Pickling
+#    pickle.dump(test_index, fp)
 
 
 #To load:
-with open("train_indexes.txt", "rb") as fp:   # Unpickling
-    b = pickle.load(fp)
+#with open("train_indexes.txt", "rb") as fp:   # Unpickling
+#    b = pickle.load(fp)
 
