@@ -69,15 +69,119 @@ C2 = params2['C']
 gamma2 = params2['gamma']
 #{'C': 20.0, 'gamma': 2e-06}
 
+print('third')
+#THIRD
+Cs = [0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8]
+gammas = [0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8]
+Cs = [x*C2 for x in Cs]
+gammas = [x*gamma2 for x in gammas]
+params3 = svc_param_selection2(X, Y, 5, Cs, gammas)
+C3 = params3['C']
+gamma3 = params3['gamma']
+#{'C':4 , 'gamma': 8e-6}
 
+print('fourth')
+#fourth
+Cs = [0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8]
+gammas = [0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8]
+Cs = [x*C3 for x in Cs]
+gammas = [x*gamma3 for x in gammas]
+params4 = svc_param_selection2(X, Y, 5, Cs, gammas)
+C4 = params3['C']
+gamma4 = params3['gamma']
+#{'C':4 , 'gamma': 8e-6}
 
 
 ####################TO TEST
-svm_object = svm.SVC(C=20.0, gamma=2e-06)
+svm_object = svm.SVC(C=4.0, gamma=8e-06)
 svm_object.fit(full_normPCA128_array[train_indicies],full_isAnimal_array[train_indicies])
 
-svm_object.predict()
 svm_object.score(full_normPCA128_array[test_indicies],full_isAnimal_array[test_indicies])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##########################################################
+###############LETS DO ALL THE SAME WITH ALL SUBCLASSES:
+
+
+X = full_normPCA128_array[train_indicies]
+Y = full_subClass_array[train_indicies]
+
+
+
+print('first')
+#FIRST
+params1 = svc_param_selection(X, Y, 5)
+C1 = params1['C']
+gamma1 = params1['gamma']
+#{'C': 10.0, 'gamma': 1e-06}
+
+print('second')
+#SECOND
+Cs = [0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8]
+gammas = [0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8]
+Cs = [x*C1 for x in Cs]
+gammas = [x*gamma1 for x in gammas]
+params2 = svc_param_selection2(X, Y, 5, Cs, gammas)
+C2 = params2['C']
+gamma2 = params2['gamma']
+#{'C': 4.0, 'gamma': 6e-06}
+
+print('third')
+#THIRD
+Cs = [0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8]
+gammas = [0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8]
+Cs = [x*C2 for x in Cs]
+gammas = [x*gamma2 for x in gammas]
+params3 = svc_param_selection2(X, Y, 5, Cs, gammas)
+C3 = params3['C']
+gamma3 = params3['gamma']
+#{'C': 3.2, 'gamma': 6e-06}
+
+print('fourth')
+#fourth
+Cs = [0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8]
+gammas = [0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8]
+Cs = [x*C3 for x in Cs]
+gammas = [x*gamma3 for x in gammas]
+params4 = svc_param_selection2(X, Y, 5, Cs, gammas)
+C4 = params3['C']
+gamma4 = params3['gamma']
+#{'C': 3.2, 'gamma': 6e-06}
+
+
+####################TO TEST
+svm_object = svm.SVC(C=3.2, gamma=6e-06)
+svm_object.fit(full_normPCA128_array[train_indicies],full_subClass_array[train_indicies])
+
+svm_object.score(full_normPCA128_array[test_indicies],full_subClass_array[test_indicies])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #For KNN:
