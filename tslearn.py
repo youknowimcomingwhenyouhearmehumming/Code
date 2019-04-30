@@ -84,6 +84,25 @@ y_test = Label(y_test_string)
 print(sum(y_test==1))
 print(len(y_test))
 print('percentage of not animals=',(sum(y_test==1)-len(y_test))/len(y_test))
+
+
+
+"""
+-------------- TSlearn------------------------------------
+"""
+from tslearn.utils import to_time_series
+my_first_time_series = [1, 3, 4, 2]
+formatted_time_series = to_time_series(my_first_time_series)
+print(formatted_time_series.shape)
+
+from tslearn.metrics import dtw
+dtw(data_concat)
+dtw(data_concat[0,:], data_concat[1,:])
+
+#cdist_dtw(data_concat[0,:],[data_concat[1,:]])
+
+
+
 """
 -------------- TPOT does is magic-------------------------------------
 """
