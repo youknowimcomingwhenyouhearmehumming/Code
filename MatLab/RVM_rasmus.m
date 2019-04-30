@@ -25,9 +25,17 @@ end
 %%
 p1_data = full_data(1:690,:);
 
+
+%% Fourier transform
+Y = fft(p1_data);
+
+
+figure()
+plot(Y(1,:))
+
 %%
 ndims = 10;
 [COEFF,SCORE] = pca(p1_data,'NumComponents',ndims);
 pca_data = SCORE(:,1:ndims);
 
-%%
+
