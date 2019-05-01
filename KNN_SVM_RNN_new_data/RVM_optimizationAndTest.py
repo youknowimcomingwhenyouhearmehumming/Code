@@ -64,7 +64,7 @@ params = rvc_param_selection2(X,Y,5)
 
 
 ####################TO TEST
-clf = RVC(kernel='rbf',coef1=0.1)# coef1:  1=46
+clf = RVC(kernel='rbf')# coef1:  1=46 0.1same 
 clf.fit(full_normPCA128_array[train_indicies], full_isAnimal_array[train_indicies])
 #clf.score(full_normPCA128_array[train_indicies],full_isAnimal_array[train_indicies])
 clf.score(full_normPCA128_array[test_indicies],full_isAnimal_array[test_indicies])
