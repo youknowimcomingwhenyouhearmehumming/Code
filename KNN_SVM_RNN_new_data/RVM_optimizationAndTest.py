@@ -11,6 +11,9 @@ import os
 import pickle
 from skrvm import RVC
 from sklearn.model_selection import GridSearchCV
+from sklearn import preprocessing
+from sklearn.decomposition import PCA
+from sklearn.model_selection import train_test_split
 
 #from sklearn.model_selection import GridSearchCV
 
