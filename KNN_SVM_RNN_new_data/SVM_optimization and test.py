@@ -10,13 +10,16 @@ import os
 import pickle
 from sklearn import svm
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 #For the test of comparing KNN/SVM/RVM basic
 
 
 #First we get load the splits indicies and data
 #To load:
-os.chdir('C:/Users/Ralle/Documents/GitHub/AdvancedMachineLearning/KNN_SVM_RNN_new_data')
+os.chdir('C:/Users/Ralle/OneDrive/Dokumenter/GitHub/Code/KNN_SVM_RNN_new_data')
 
 with open("train_indexes.txt", "rb") as fp:   # Unpickling
     train_indicies = pickle.load(fp)
@@ -93,18 +96,51 @@ gamma4 = params3['gamma']
 
 
 ####################TO TEST
-svm_object = svm.SVC(C=4.0, gamma=8e-06)
+svm_object = svm.SVC(C=4.0, gamma=8e-06,probability=True)
 svm_object.fit(full_normPCA128_array[train_indicies],full_isAnimal_array[train_indicies])
 
 svm_object.score(full_normPCA128_array[test_indicies],full_isAnimal_array[test_indicies])
+predictions = svm_object.predict(full_normPCA128_array[test_indicies])
+#WHEN probability = True it uses Platt scaling to estimate posterior distributions. this may be bad
 
 
 
+#################Creating the most beatiful graphs
+classes = np.unique(full_subClass_array)
+confu_matrix = np.zeros((2,np.size(classes)))
+for i in range(np.size(classes)):
+    for j in range(np.size(predictions)):
+        if full_subClass_array[test_indicies[j]] == classes[i]:
+            if predictions[j] == full_isAnimal_array[test_indicies[j]]: #TRUE
+                confu_matrix[1,i]+=1
+            else:                                                       #FALSE
+                confu_matrix[0,i]+=1
 
+y_ax = ["False","True"]
+x_ax = classes
 
+fig, ax = plt.subplots()
+im = ax.imshow(confu_matrix)
 
+ax.set_xticks(np.arange(len(x_ax)))
+ax.set_yticks(np.arange(len(y_ax)))
 
+ax.set_xticklabels(x_ax)
+ax.set_yticklabels(y_ax)
 
+plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+         rotation_mode="anchor")
+
+# Loop over data dimensions and create text annotations.
+for i in range(len(y_ax)):
+    for j in range(len(x_ax)):
+        text = ax.text(j, i, str(confu_matrix[i, j]) + (" (") + (str(np.round(confu_matrix[i, j]/(np.sum(confu_matrix[:, j]))*100,1))) + ("%") + (")"), ha="center", va="center", color="black")
+
+ax.set_title("Prediction of Animate orinanimate of test set using SVM")
+fig.tight_layout()
+plt.xlabel("True class")
+plt.ylabel("Predicted binary class")
+plt.show()
 
 
 
@@ -166,10 +202,43 @@ svm_object = svm.SVC(C=3.2, gamma=6e-06)
 svm_object.fit(full_normPCA128_array[train_indicies],full_subClass_array[train_indicies])
 
 svm_object.score(full_normPCA128_array[test_indicies],full_subClass_array[test_indicies])
+predictions = svm_object.predict(full_normPCA128_array[test_indicies])
 
 
 
 
+
+#################Creating the most beatiful graphs
+
+
+confusion = confusion_matrix(full_subClass_array[test_indicies], predictions, labels=None, sample_weight=None)
+
+classes = np.unique(full_subClass_array)
+y_ax = classes
+x_ax = classes
+
+fig, ax = plt.subplots()
+im = ax.imshow(confusion)
+
+ax.set_xticks(np.arange(len(x_ax)))
+ax.set_yticks(np.arange(len(y_ax)))
+
+ax.set_xticklabels(x_ax)
+ax.set_yticklabels(y_ax)
+
+plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+         rotation_mode="anchor")
+
+# Loop over data dimensions and create text annotations.
+for i in range(len(y_ax)):
+    for j in range(len(x_ax)):
+        text = ax.text(j, i, str(confusion[i, j]) + (" (") + (str(np.round(confusion[i, j]/(np.sum(confusion[:, j]))*100,1))) + ("%") + (")"), ha="center", va="center", color="black")
+
+ax.set_title("Prediction of sub class of test set using SVM")
+fig.tight_layout()
+plt.xlabel("True class")
+plt.ylabel("Predicted class")
+plt.show()
 
 
 
