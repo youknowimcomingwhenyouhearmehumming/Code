@@ -70,7 +70,7 @@ n_observations = n_subject_to_use*690
 X_train, X_test, y_train_index, y_test_index = train_test_split(normal_data_pca[range(n_observations),:],range(n_observations),test_size=0.2)
 
 mean_err = np.zeros((2048,1))
-for i in range(2048):
+for i in range(2048):   
     n_semantic_as_y = i #the 1st semantic is used as output
     clf1=RVR(kernel='rbf')
     clf1.fit(X_train,full_semantics_matrix[y_train_index,n_semantic_as_y])
