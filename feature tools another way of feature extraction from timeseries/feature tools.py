@@ -14,6 +14,7 @@ import os
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import pickle
+import featuretools as ft
 
 
 def concat_channels(eeg_events):#channels*EEG_value*img 
@@ -41,7 +42,7 @@ def is_animal(class_vector):#creates vector of 1 if animal and 0 if not
 
 
 
-os.chdir('C:/Users/Bruger/Desktop/usb/Projekt/new_data/data')
+os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/new_data/data')
 
 n_experiments = 4
 
@@ -97,10 +98,10 @@ ID=ID-2
 A=ID
 
 
-total=np.zeros([1244160,66])
-total[:,0]=ID
-total[:,1]=time
-total[:,2:]=full_data_matrix
+#total=np.zeros([1244160,66])
+#total[:,0]=ID
+#total[:,1]=time
+#total[:,2:]=full_data_matrix
 
 #total=np.concatenate(np.transpose(ID),np.transpose(time),full_data_matrix)
 #
@@ -135,13 +136,14 @@ df = pd.DataFrame({"time":time,"id":ID,"ch0":full_data_matrix[:,0],"ch1":full_da
 
 from tsfresh import extract_relevant_features
 
-features_filtered_direct = extract_relevant_features(df, y,column_id='id', column_sort='time', n_jobs=4)
+#features_filtered_direct = extract_relevant_features(df, y,column_id='id', column_sort='time', n_jobs=4)
 
 
 
 
 
-
+entities = {"id" : (df, "id")}
+feature_matrix_customers, features_defs = ft.dfs(entities=entities, target_entity="id")
 
 
 """

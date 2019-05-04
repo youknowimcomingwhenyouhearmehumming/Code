@@ -98,7 +98,8 @@ clf=TPOTClassifier(verbosity=2,n_jobs=-1)
 clf.fit(X_train,y_train)
 
 print(sum(y_test==1))
-print(len(y_test))
+print(len(y_test))'
+
 print('percentage of not animals=',(sum(y_test==1)-len(y_test))/len(y_test))
 
 
