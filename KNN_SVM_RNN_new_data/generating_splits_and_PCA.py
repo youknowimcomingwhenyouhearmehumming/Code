@@ -4,16 +4,7 @@ Created on Mon Apr 29 10:08:49 2019
 
 @author: Ralle
 """
-import scipy.io
-import numpy as np
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import KFold
-from sklearn import preprocessing
-from sklearn.decomposition import PCA
-import os
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-import pickle
+extracted_features
 
 
 def concat_channels(eeg_events):#channels*EEG_value*img 
