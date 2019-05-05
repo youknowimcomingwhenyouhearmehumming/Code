@@ -60,61 +60,61 @@ Y = full_subClass_array[train_indicies]
 """
 For binary
 """
-X_train=full_normPCA128_array[train_indicies]
-y_train=full_isAnimal_array[train_indicies]
-
-X_test=full_normPCA128_array[test_indicies]
-y_test=full_isAnimal_array[test_indicies]
-
-print(sum(y_test==1))
-print(len(y_test))
-print('percentage of not animals=',(sum(y_test==1)-len(y_test))/len(y_test))
-
-
-#"""
-#For all classes
-#"""
-#
-#
-#
-#
 #X_train=full_normPCA128_array[train_indicies]
-#y_train_string=full_subClass_array[train_indicies]
+#y_train=full_isAnimal_array[train_indicies]
 #
 #X_test=full_normPCA128_array[test_indicies]
-#y_test_string=full_subClass_array[test_indicies]
+#y_test=full_isAnimal_array[test_indicies]
 #
-#y_train=np.zeros(len(y_train_string))
-#y_test=np.ceil(np.zeros(len(y_test_string)))
+#print(sum(y_test==1))
+#print(len(y_test))
+#print('percentage of not animals=',(sum(y_test==1)-len(y_test))/len(y_test))
 #
-#for i in range(len(y_train_string)):
-#    if y_train_string[i]=='airplane':
-#        y_train[i]=1
-#    if y_train_string[i]=='elephant':
-#        y_train[i]=2
-#    if y_train_string[i]=='pizza':
-#        y_train[i]=3
-#    if y_train_string[i]=='sheep':
-#        y_train[i]=4
-#    if y_train_string[i]=='train':
-#        y_train[i]=5
-#    if y_train_string[i]=='zebra':
-#        y_train[i]=6
-#
-#for i in range(len(y_test_string)):
-#    if y_test_string[i]=='airplane':
-#        y_test[i]=1
-#    if y_test_string[i]=='elephant':
-#        y_test[i]=2
-#    if y_test_string[i]=='pizza':
-#        y_test[i]=3
-#    if y_test_string[i]=='sheep':
-#        y_test[i]=4
-#    if y_test_string[i]=='train':
-#        y_test[i]=5
-#    if y_test_string[i]=='zebra':
-#        y_test[i]=6
-#
+
+"""
+For all classes
+"""
+
+
+
+
+X_train=full_normPCA128_array[train_indicies]
+y_train_string=full_subClass_array[train_indicies]
+
+X_test=full_normPCA128_array[test_indicies]
+y_test_string=full_subClass_array[test_indicies]
+
+y_train=np.zeros(len(y_train_string))
+y_test=np.ceil(np.zeros(len(y_test_string)))
+
+for i in range(len(y_train_string)):
+    if y_train_string[i]=='airplane':
+        y_train[i]=1
+    if y_train_string[i]=='elephant':
+        y_train[i]=2
+    if y_train_string[i]=='pizza':
+        y_train[i]=3
+    if y_train_string[i]=='sheep':
+        y_train[i]=4
+    if y_train_string[i]=='train':
+        y_train[i]=5
+    if y_train_string[i]=='zebra':
+        y_train[i]=6
+
+for i in range(len(y_test_string)):
+    if y_test_string[i]=='airplane':
+        y_test[i]=1
+    if y_test_string[i]=='elephant':
+        y_test[i]=2
+    if y_test_string[i]=='pizza':
+        y_test[i]=3
+    if y_test_string[i]=='sheep':
+        y_test[i]=4
+    if y_test_string[i]=='train':
+        y_test[i]=5
+    if y_test_string[i]=='zebra':
+        y_test[i]=6
+
 
 
 
