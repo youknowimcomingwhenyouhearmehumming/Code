@@ -11,8 +11,6 @@ import matplotlib.pyplot as plt
 from skrvm import RVR
 from sklearn import preprocessing
 from sklearn.decomposition import PCA
-from sklearn.linear_model import LinearRegression
-
 from sklearn.model_selection import train_test_split
 
 
@@ -29,11 +27,8 @@ def concat_channels(eeg_events):#channels*EEG_value*img
     return concat_all #[n_img*17600]
 
 
-#os.chdir('C:/Users/Ralle/Desktop/Advanced Machine Learning Project/AML/Nicolai/data')#
-os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/data_nikolai/Nicolai/data')
-
-nsubjects = 1
-print('so far1')
+os.chdir('C:/Users/Ralle/Desktop/Advanced Machine Learning Project/AML/Nicolai/data')#
+nsubjects = 15
 
 full_data_matrix = []
 full_class_array = []
@@ -61,14 +56,12 @@ for i in range(nsubjects):
         
 
 
-print('so far2')
 
 normal_data_all = preprocessing.scale(full_data_matrix)#normalize
 pca = PCA(10, svd_solver='auto')
 pca.fit(normal_data_all)
 normal_data_pca = pca.transform(normal_data_all)#transform data to xx components
 
-print('so far3')
 
 #####################################################################################
 ##We use the image_sematics from each to train after
@@ -76,33 +69,18 @@ n_subject_to_use = 1
 n_observations = n_subject_to_use*690
 X_train, X_test, y_train_index, y_test_index = train_test_split(normal_data_pca[range(n_observations),:],range(n_observations),test_size=0.2)
 
-print('so far4')
 mean_err = np.zeros((2048,1))
 for i in range(2048):   
     n_semantic_as_y = i #the 1st semantic is used as output
-#    clf1=RVR(kernel='rbf')
-    clf1=LinearRegression()
-
+    clf1=RVR(kernel='rbf')
     clf1.fit(X_train,full_semantics_matrix[y_train_index,n_semantic_as_y])
-#    clf1.fit(X_train,full_semantics_matrix[y_train_index])
-
     predicted_out = clf1.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
 
     ## calc error from test output
     err = predicted_out-full_semantics_matrix[y_test_index,n_semantic_as_y]
-#    err = predicted_out-full_semantics_matrix[y_test_index]
-
     mean_err[i] = np.mean(err)
     print(i)
 
-
-#mean_err = np.zeros((1,1))
-#clf1=LinearRegression()
-#clf1.fit(X_train,full_semantics_matrix[y_train_index])
-#predicted_out = clf1.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
-#err = predicted_out-full_semantics_matrix[y_test_index]
-#mean_err = np.mean(abs(err))
-#print('mean_err=',mean_err)
 
 
 plt.figure()

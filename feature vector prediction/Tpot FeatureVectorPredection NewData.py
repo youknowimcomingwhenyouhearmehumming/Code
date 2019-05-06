@@ -9,7 +9,7 @@ import os
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import pickle
-
+from tpot import TPOTRegressor
 
 def concat_channels(eeg_events):#channels*EEG_value*img 
     #for putting all channels in a single vector. return is n_img x 17600
@@ -98,27 +98,33 @@ X_train, X_test, y_train_index, y_test_index = train_test_split(normal_data_pca[
 #y_train_index=np.array(y_train_index)
 #y_train_index.astype(int)
 
-#
-#mean_err = np.zeros((1,1))
-#for i in range(1):   
-#    n_semantic_as_y = i #the 1st semantic is used as output
-#    clf=LinearRegression()
-#    clf.fit(X_train,full_semantics_matrix[y_train_index,n_semantic_as_y])
-#    
-#    predicted_out = clf.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
-#
-#    ## calc error from test output
-#    err = predicted_out-full_semantics_matrix[y_test_index,n_semantic_as_y]
-#    mean_err[i] = np.mean(err)
-#    print(i)
+print('so far4')
+
+Hours_of_running_time=8.0
+min_per_feature_vector=Hours_of_running_time*60.0/2048.0
+
+mean_err = np.zeros((2048,1))
+for i in range(2048):   
+    n_semantic_as_y = i #the 1st semantic is used as output
+#    clf1=RVR(kernel='rbf')
+    clf1=clf = TPOTRegressor(config_dict='TPOT light', verbosity=2,max_time_mins=min_per_feature_vector )
+    clf1.fit(X_train,full_semantics_matrix[y_train_index,n_semantic_as_y])
+#    clf1.fit(X_train,full_semantics_matrix[y_train_index])
+    predicted_out = clf1.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
+    ## calc error from test output
+    err = predicted_out-full_semantics_matrix[y_test_index,n_semantic_as_y]
+    mean_err[i] = np.mean(abs(err))
+    print(i)
+
+total_mean_err=np.mean(mean_err)
 
 
-clf1=LinearRegression()
-clf1.fit(X_train,full_semantics_matrix[y_train_index])
-predicted_out = clf1.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
-err = predicted_out-full_semantics_matrix[y_test_index]
-mean_err = np.mean(abs(err))
-print('mean_err=',mean_err)
+#clf = TPOTRegressor(generations=5, population_size=50,config_dict='TPOT light', verbosity=2)
+#clf.fit(X_train,full_semantics_matrix[y_train_index])
+#predicted_out = clf1.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
+#err = predicted_out-full_semantics_matrix[y_test_index]
+#mean_err = np.mean(abs(err))
+#print('mean_err=',mean_err)
 
 
 plt.figure()
