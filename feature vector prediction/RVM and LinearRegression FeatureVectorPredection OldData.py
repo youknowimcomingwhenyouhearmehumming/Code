@@ -1,14 +1,19 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Apr 20 10:33:57 2019
+
+@author: Ralle
+"""
 import scipy.io
 import numpy as np
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import KFold
-from sklearn import preprocessing
-from sklearn.decomposition import PCA
-from sklearn.linear_model import LogisticRegression
 import os
 import matplotlib.pyplot as plt
+from skrvm import RVR
+from sklearn import preprocessing
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LinearRegression
+
 from sklearn.model_selection import train_test_split
-import pickle
 
 
 def concat_channels(eeg_events):#channels*EEG_value*img 
@@ -24,95 +29,86 @@ def concat_channels(eeg_events):#channels*EEG_value*img
     return concat_all #[n_img*17600]
 
 
-def is_animal(class_vector):#creates vector of 1 if animal and 0 if not
-    n = np.size(class_vector)
-    bin_vector = np.zeros(n)
-    for i in range(n):
-        if class_vector[i] == 'animal':
-            bin_vector[i] = 1
-        else:
-            bin_vector[i] = 0
-    return bin_vector
+#os.chdir('C:/Users/Ralle/Desktop/Advanced Machine Learning Project/AML/Nicolai/data')#
+os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/data_nikolai/Nicolai/data')
 
-
-
-os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/new_data/data')
-
-
-n_experiments = 4
-
+nsubjects = 1
+print('so far1')
 
 full_data_matrix = []
-full_superClass_array = []
-full_subClass_array = []
+full_class_array = []
 full_semantics_matrix = []
-
-for i in range(n_experiments):
+for i in range(nsubjects):
     eeg_events = scipy.io.loadmat('exp' + str(i+1) + '\eeg_events.mat')
     image_order = np.genfromtxt('exp' + str(i+1) + '\image_order.txt', delimiter="\t", skip_header = True, dtype=(str))#
     data = eeg_events["eeg_events"]
     concat_data = concat_channels(data)
+    
     #load sematics
     image_semantics_mat = scipy.io.loadmat('exp' + str(i+1) + '\image_semantics.mat')
     image_semantics = image_semantics_mat["image_semantics"]#semantics_vector x n_images
     
+    
+    
     if i == 0:
         full_data_matrix = concat_data
-        full_superClass_array = image_order[:,0]
-        full_subClass_array = image_order[:,1]
+        full_class_array = image_order[:,1]
         full_semantics_matrix = np.transpose(image_semantics)
-
     else:
-        full_data_matrix  = np.concatenate((full_data_matrix,concat_data),axis=0)
-        full_superClass_array  = np.concatenate((full_superClass_array,image_order[:,0]),axis=0)
-        full_subClass_array  = np.concatenate((full_subClass_array,image_order[:,1]),axis=0)
+        full_data_matrix  = np.concatenate((full_data_matrix,concat_data))
+        full_class_array  = np.concatenate((full_class_array,image_order[:,1]))
         full_semantics_matrix = np.concatenate((full_semantics_matrix,np.transpose(image_semantics)))
         
-#Normalize data
-  
+
+
+print('so far2')
+
 normal_data_all = preprocessing.scale(full_data_matrix)#normalize
-
-
-
-#Change superclass toAnimal or not:
-full_isAnimal_array = is_animal(full_superClass_array)
-
-
-"""
-PCA stuff method 1
-"""
 pca = PCA(10, svd_solver='auto')
 pca.fit(normal_data_all)
 normal_data_pca = pca.transform(normal_data_all)#transform data to xx components
 
-
+print('so far3')
 
 #####################################################################################
 ##We use the image_sematics from each to train after
-n_observations =2160
+n_subject_to_use = 1
+n_observations = n_subject_to_use*690
 X_train, X_test, y_train_index, y_test_index = train_test_split(normal_data_pca[range(n_observations),:],range(n_observations),test_size=0.2)
 
-#feature_vector=np.zeros(2048,)
+print('so far4')
+#mean_err = np.zeros((1,1))
+#for i in range(1):   
+#    n_semantic_as_y = i #the 1st semantic is used as output
+#    clf1=RVR(kernel='rbf')
+##    clf1=LinearRegression()
+#
+#    clf1.fit(X_train,full_semantics_matrix[y_train_index,n_semantic_as_y])
+##    clf1.fit(X_train,full_semantics_matrix[y_train_index])
+#
+#    predicted_out = clf1.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
+#
+#    ## calc error from test output
+#    err = predicted_out-full_semantics_matrix[y_test_index,n_semantic_as_y]
+##    err = predicted_out-full_semantics_matrix[y_test_index]
+#
+#    mean_err[i] = np.mean(err)
+#    print(i)
 
 
-#y_train_index=np.array(y_train_index)
-#y_train_index.astype(int)
+mean_err = np.zeros((1,1))
 
+clf1=LinearRegression()
 
-mean_err = np.zeros((2048,1))
-for i in range(2048):   
-    n_semantic_as_y = i #the 1st semantic is used as output
-    clf1=LogisticRegression()
-    clf1.fit(X_train,full_semantics_matrix[y_train_index,n_semantic_as_y])
-    
-    predicted_out = clf1.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
+clf1.fit(X_train,full_semantics_matrix[y_train_index])
 
-    ## calc error from test output
-    err = predicted_out-full_semantics_matrix[y_test_index,n_semantic_as_y]
-    mean_err[i] = np.mean(err)
-    print(i)
+predicted_out = clf1.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
 
+err = predicted_out-full_semantics_matrix[y_test_index]
 
+mean_err = np.mean(abs(err))
+
+print('mean_err=',mean_err)
 
 
 plt.figure()
