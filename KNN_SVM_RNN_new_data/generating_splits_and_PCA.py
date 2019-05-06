@@ -69,7 +69,7 @@ full_normalized_array = preprocessing.scale(full_data_matrix)#normalize
 
 ################PCA AND VARIANCE EXPLAINED
 pca = PCA(svd_solver='auto')#PCA with all components
-pca.fit(full_normalized_array)
+pca.fit(full_normalized_array[train_indicies])
 pca_cumsum = np.cumsum(pca.explained_variance_ratio_)*100
 
 plt.figure()
@@ -83,13 +83,13 @@ plt.plot(range(2160),np.repeat(95,2160))
 plt.legend(['Cumulative variance explained','95%'])
 plt.show()
 
-############################ PCA_ 655 components holds 95% of variance
-pca = PCA(svd_solver='auto', n_components = 655)#PCA with all components
+############################ PCA_ 600 components holds 95% of variance using train set as base
+pca = PCA(svd_solver='auto', n_components = 600)#PCA with all components
 pca.fit(full_normalized_array)
-full_normPCA_array = pca.transform(full_normalized_array)
+full_normPCA600_array = pca.transform(full_normalized_array)
 
-############################ PCA_ 128 components holds 75% of variance
-pca = PCA(svd_solver='auto', n_components = 128)#PCA with all components
+############################ PCA_ 123 components holds 75% of variance using only train set as base
+pca = PCA(svd_solver='auto', n_components = 123)#PCA with all components
 pca.fit(full_normalized_array)
 full_normPCA_array = pca.transform(full_normalized_array)
 

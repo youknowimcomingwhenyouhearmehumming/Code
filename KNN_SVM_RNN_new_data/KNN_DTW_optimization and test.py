@@ -55,3 +55,4 @@ pred = knn_dtw_object.predict(full_data_matrix[test_indicies,0:576])
 is_correct(pred[0],full_isAnimal_array[test_indicies])
 
 
+#0.516 with warping window=5
