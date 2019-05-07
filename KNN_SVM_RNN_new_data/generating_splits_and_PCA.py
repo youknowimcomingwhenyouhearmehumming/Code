@@ -4,7 +4,15 @@ Created on Mon Apr 29 10:08:49 2019
 
 @author: Ralle
 """
-extracted_features
+import scipy.io
+import numpy as np
+import os
+import pickle
+from sklearn import svm
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def concat_channels(eeg_events):#channels*EEG_value*img 
@@ -66,12 +74,12 @@ pca_cumsum = np.cumsum(pca.explained_variance_ratio_)*100
 plt.figure()
 plt.plot(pca_cumsum)
 plt.grid()
-plt.ylabel('% Variance Explained')
+plt.ylabel('Cummulative Variance Explained [%]')
 plt.xlabel('# of Features')
-plt.title('PCA Analysis')
+plt.title('PCA Variance Explained')
 plt.ylim(0,100.5)
-plt.plot(range(2160),np.repeat(95,2160))
-plt.legend(['Cumulative variance explained','95%'])
+#plt.plot(range(2160),np.repeat(95,2160))
+#plt.legend(['Cumulative variance explained'])
 plt.show()
 
 ############################ PCA_ 600 components holds 95% of variance using train set as base
