@@ -97,30 +97,41 @@ gamma4 = params3['gamma']
 
 ####################TO TEST
 svm_object = svm.SVC(C=4.0, gamma=8e-06,probability=True)
-svm_object.fit(full_normPCA128_array[train_indicies],full_isAnimal_array[train_indicies])
+svm_object.fit(full_normPCA123_array[train_indicies],full_isAnimal_array[train_indicies])
 
-svm_object.score(full_normPCA128_array[test_indicies],full_isAnimal_array[test_indicies])
-predictions = svm_object.predict(full_normPCA128_array[test_indicies])
+svm_object.score(full_normPCA123_array[test_indicies],full_isAnimal_array[test_indicies])
+predictions = svm_object.predict(full_normPCA123_array[test_indicies])
 #WHEN probability = True it uses Platt scaling to estimate posterior distributions. this may be bad
 
 
+corr = is_correct(predictions,full_isAnimal_array[test_indicies])
+N = np.size(full_isAnimal_array[test_indicies])
+accuracy = np.sqrt(corr*(100-corr)/(100*N))
+
 
 #################Creating the most beatiful graphs
+#################Creating the most beatiful graphs
+pred = predictions
 classes = np.unique(full_subClass_array)
 confu_matrix = np.zeros((2,np.size(classes)))
 for i in range(np.size(classes)):
-    for j in range(np.size(predictions)):
+    for j in range(np.size(pred)):
         if full_subClass_array[test_indicies[j]] == classes[i]:
-            if predictions[j] == full_isAnimal_array[test_indicies[j]]: #TRUE
-                confu_matrix[1,i]+=1
-            else:                                                       #FALSE
+            if pred[j] == full_isAnimal_array[test_indicies[j]]: #TRUE
                 confu_matrix[0,i]+=1
+            else:                                                       #FALSE
+                confu_matrix[1,i]+=1
 
-y_ax = ["False","True"]
+confu_matrix_percent = np.zeros(np.shape(confu_matrix))
+for i in range(np.size(classes)):
+    for j in range(2):
+        confu_matrix_percent[j,i] = confu_matrix[j,i]/np.sum(confu_matrix[:,i])*100
+
+y_ax = ["True","False"]
 x_ax = classes
 
 fig, ax = plt.subplots()
-im = ax.imshow(confu_matrix)
+im = ax.imshow(confu_matrix_percent)
 
 ax.set_xticks(np.arange(len(x_ax)))
 ax.set_yticks(np.arange(len(y_ax)))
@@ -134,14 +145,13 @@ plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
 # Loop over data dimensions and create text annotations.
 for i in range(len(y_ax)):
     for j in range(len(x_ax)):
-        text = ax.text(j, i, str(confu_matrix[i, j]) + (" (") + (str(np.round(confu_matrix[i, j]/(np.sum(confu_matrix[:, j]))*100,1))) + ("%") + (")"), ha="center", va="center", color="black")
+        text = ax.text(j, i, str(np.round(confu_matrix_percent[i,j],1)) + " %", ha="center", va="center", color="black")
 
-ax.set_title("Prediction of Animate orinanimate of test set using SVM")
+ax.set_title("Predictet binary class compared to true class of test set using SVM")
 fig.tight_layout()
 plt.xlabel("True class")
 plt.ylabel("Predicted binary class")
 plt.show()
-
 
 
 
@@ -199,26 +209,47 @@ gamma4 = params3['gamma']
 
 ####################TO TEST
 svm_object = svm.SVC(C=3.2, gamma=6e-06)
-svm_object.fit(full_normPCA128_array[train_indicies],full_subClass_array[train_indicies])
+svm_object.fit(full_normPCA123_array[train_indicies],full_subClass_array[train_indicies])
 
-svm_object.score(full_normPCA128_array[test_indicies],full_subClass_array[test_indicies])
-predictions = svm_object.predict(full_normPCA128_array[test_indicies])
+svm_object.score(full_normPCA123_array[test_indicies],full_subClass_array[test_indicies])
+predictions = svm_object.predict(full_normPCA123_array[test_indicies])
 
-
+corr = is_correct(predictions,full_subClass_array[test_indicies])
+N = np.size(full_subClass_array[test_indicies])
+accuracy = np.sqrt(corr*(100-corr)/(100*N))
 
 
 
 #################Creating the most beatiful graphs
-
-
-confusion = confusion_matrix(full_subClass_array[test_indicies], predictions, labels=None, sample_weight=None)
-
+pred = predictions
 classes = np.unique(full_subClass_array)
+confu_matrix = np.zeros((np.size(classes),np.size(classes)))
+for i in range(np.size(classes)):
+    for j in range(np.size(pred)):
+        if full_subClass_array[test_indicies[j]] == classes[i]:
+            if classes[0] == pred[j]:
+                confu_matrix[0,i]+=1
+            elif classes[1] == pred[j]:
+                confu_matrix[1,i]+=1
+            elif classes[2] == pred[j]:
+                confu_matrix[2,i]+=1
+            elif classes[3] == pred[j]:
+                confu_matrix[3,i]+=1
+            elif classes[4] == pred[j]:
+                confu_matrix[4,i]+=1
+            elif classes[5] == pred[j]:
+                confu_matrix[5,i]+=1
+
+confu_matrix_percent = np.zeros(np.shape(confu_matrix))
+for i in range(np.size(classes)):
+    for j in range(np.size(classes)):
+        confu_matrix_percent[j,i] = confu_matrix[j,i]/np.sum(confu_matrix[:,i])*100
+
 y_ax = classes
 x_ax = classes
 
 fig, ax = plt.subplots()
-im = ax.imshow(confusion)
+im = ax.imshow(confu_matrix_percent)
 
 ax.set_xticks(np.arange(len(x_ax)))
 ax.set_yticks(np.arange(len(y_ax)))
@@ -232,9 +263,9 @@ plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
 # Loop over data dimensions and create text annotations.
 for i in range(len(y_ax)):
     for j in range(len(x_ax)):
-        text = ax.text(j, i, str(confusion[i, j]) + (" (") + (str(np.round(confusion[i, j]/(np.sum(confusion[:, j]))*100,1))) + ("%") + (")"), ha="center", va="center", color="black")
+        text = ax.text(j, i, str(np.round(confu_matrix_percent[i,j],1)) + " %", ha="center", va="center", color="black")
 
-ax.set_title("Prediction of sub class of test set using SVM")
+ax.set_title("Predictet class compared to true class of test set using SVM")
 fig.tight_layout()
 plt.xlabel("True class")
 plt.ylabel("Predicted class")
