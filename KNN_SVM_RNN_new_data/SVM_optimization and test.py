@@ -30,6 +30,10 @@ full_isAnimal_array = np.load('full_isAnimal_array.npy')
 full_subClass_array = np.load('full_subClass_array.npy')
 full_normPCA600_array = np.load('full_normPCA600.npy')
 full_normPCA123_array = np.load('full_normPCA123.npy')
+
+
+
+
 #######################################################################
 
 #WE START with the biary case
