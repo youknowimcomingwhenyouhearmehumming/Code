@@ -1,129 +1,185 @@
 import scipy.io
 import numpy as np
-import os
-import pickle
-from sklearn import svm
-from sklearn.model_selection import GridSearchCV
-
-import matplotlib.pyplot as plt
-from sklearn.datasets import load_digits
-from sklearn.metrics import classification_report,confusion_matrix,precision_score
-
-from sklearn.decomposition import PCA
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import KFold
 from sklearn import preprocessing
-import scipy.io as sio
-plt.close('all')
-
-#For the test of comparing KNN/SVM/RVM basic
-
-
-#First we get load the splits indicies and data
-#To load:
-os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/Code/KNN_SVM_RNN_new_data')
-
-with open("train_indexes.txt", "rb") as fp:   # Unpickling
-    train_indicies = pickle.load(fp)
-with open("test_indexes.txt", "rb") as fp:   # Unpickling
-    test_indicies = pickle.load(fp)
-
-full_isAnimal_array = np.load('full_isAnimal_array.npy')
-full_subClass_array = np.load('full_subClass_array.npy')
-full_normPCA655_array = np.load('full_normPCA600.npy')
-full_normPCA128_array = np.load('full_normPCA123.npy')
-#######################################################################
-
-#WE START with the biary case
-#SVM
-def svc_param_selection(X, y, nfolds): #https://medium.com/@aneesha/svm-parameter-tuning-in-scikit-learn-using-gridsearchcv-2413c02125a0
-    Cs = [1e-2,1e-1,1e-0,1e+1,1e+2,1e+3,1e+4]
-    gammas = [1e-8,1e-7,1e-6, 1e-5,1e-4,1e-3,1e-2]
-    param_grid = {'C': Cs, 'gamma' : gammas}
-    grid_search = GridSearchCV(svm.SVC(kernel='rbf'), param_grid, cv=nfolds)
-    grid_search.fit(X, y)
-    grid_search.best_params_
-    return grid_search.best_params_
-
-def svc_param_selection2(X, y, nfolds, Cs, gammas): #https://medium.com/@aneesha/svm-parameter-tuning-in-scikit-learn-using-gridsearchcv-2413c02125a0
-    param_grid = {'C': Cs, 'gamma' : gammas}
-    grid_search = GridSearchCV(svm.SVC(kernel='rbf'), param_grid, cv=nfolds)
-    grid_search.fit(X, y)
-    grid_search.best_params_
-    return grid_search.best_params_
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LinearRegression
+import os
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+import pickle
 
 
-X = full_normPCA128_array[train_indicies]
-Y = full_isAnimal_array[train_indicies]
+def concat_channels(eeg_events):#channels*EEG_value*img 
+    #for putting all channels in a single vector. return is n_img x 17600
+    n_channels,n_samples,n_img = np.shape(eeg_events)
+    concat_all = np.zeros((n_img,n_channels*n_samples))
+    for i in range(n_img): #for each image
+        concat_row = []
+        for j in range(n_channels): #for each channel of channels
+            #concat_data[i] = np.concatenate((concat_data[i],eeg_events[j,:,i]),axis=1)
+            concat_row = np.concatenate((concat_row,eeg_events[j,:,i]))
+        concat_all[i] = concat_row
+    return concat_all #[n_img*17600]
 
-X = full_normPCA128_array[train_indicies]
-Y = full_subClass_array[train_indicies]
+#
+#def is_animal(class_vector):#creates vector of 1 if animal and 0 if not
+#    n = np.size(class_vector)
+#    bin_vector = np.zeros(n)
+#    for i in range(n):
+#        if class_vector[i] == 'animal':
+#            bin_vector[i] = 1
+#        else:
+#            bin_vector[i] = 0
+#    return bin_vector
+
+
+
+os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/new_data/data')
+
+
+n_experiments = 4
+
+
+full_data_matrix = []
+full_superClass_array = []
+full_subClass_array = []
+full_semantics_matrix = []
+
+for i in range(n_experiments):
+    eeg_events = scipy.io.loadmat('exp' + str(i+1) + '\eeg_events.mat')
+    image_order = np.genfromtxt('exp' + str(i+1) + '\image_order.txt', delimiter="\t", skip_header = True, dtype=(str))#
+    data = eeg_events["eeg_events"]
+    concat_data = concat_channels(data)
+    #load sematics
+    image_semantics_mat = scipy.io.loadmat('exp' + str(i+1) + '\image_semantics.mat')
+    image_semantics = image_semantics_mat["image_semantics"]#semantics_vector x n_images
+    
+    if i == 0:
+        full_data_matrix = concat_data
+        full_superClass_array = image_order[:,0]
+        full_subClass_array = image_order[:,1]
+        full_semantics_matrix = np.transpose(image_semantics)
+
+    else:
+        full_data_matrix  = np.concatenate((full_data_matrix,concat_data),axis=0)
+        full_superClass_array  = np.concatenate((full_superClass_array,image_order[:,0]),axis=0)
+        full_subClass_array  = np.concatenate((full_subClass_array,image_order[:,1]),axis=0)
+        full_semantics_matrix = np.concatenate((full_semantics_matrix,np.transpose(image_semantics)))
+        
+#Normalize data
+  
+normal_data_all = preprocessing.scale(full_data_matrix)#normalize
+
+
+
+#Change superclass toAnimal or not:
+#full_isAnimal_array = is_animal(full_superClass_array)
+
 
 """
-For binary
+PCA stuff method 1
 """
-#X_train=full_normPCA128_array[train_indicies]
-#y_train=full_isAnimal_array[train_indicies]
-#
-#X_test=full_normPCA128_array[test_indicies]
-#y_test=full_isAnimal_array[test_indicies]
-#
-#print(sum(y_test==1))
-#print(len(y_test))
-#print('percentage of not animals=',(sum(y_test==1)-len(y_test))/len(y_test))
-#
+pca = PCA(2048, svd_solver='auto')
+pca.fit(normal_data_all)
+normal_data_pca = pca.transform(normal_data_all)#transform data to xx components
+
 
 """
-For all classes
+PCA stuff 2, detailed
 """
-X_train=full_normPCA128_array[train_indicies]
-y_train_string=full_subClass_array[train_indicies]
 
-X_test=full_normPCA128_array[test_indicies]
-y_test_string=full_subClass_array[test_indicies]
-
-y_train=np.zeros(len(y_train_string))
-y_test=np.ceil(np.zeros(len(y_test_string)))
-
-for i in range(len(y_train_string)):
-    if y_train_string[i]=='airplane':
-        y_train[i]=1
-    if y_train_string[i]=='elephant':
-        y_train[i]=2
-    if y_train_string[i]=='pizza':
-        y_train[i]=3
-    if y_train_string[i]=='sheep':
-        y_train[i]=4
-    if y_train_string[i]=='train':
-        y_train[i]=5
-    if y_train_string[i]=='zebra':
-        y_train[i]=6
-
-for i in range(len(y_test_string)):
-    if y_test_string[i]=='airplane':
-        y_test[i]=1
-    if y_test_string[i]=='elephant':
-        y_test[i]=2
-    if y_test_string[i]=='pizza':
-        y_test[i]=3
-    if y_test_string[i]=='sheep':
-        y_test[i]=4
-    if y_test_string[i]=='train':
-        y_test[i]=5
-    if y_test_string[i]=='zebra':
-        y_test[i]=6
+#import scipy.misc
+#scipy.misc.imsave('outfile.jpg', image_array)
 
 
+"""
+PCA stuff
+"""
 
+#################PCA AND VARIANCE EXPLAINED
+#pca = PCA(svd_solver='auto')#PCA with all components
+#pca.fit(full_normalized_array)
+#pca_cumsum = np.cumsum(pca.explained_variance_ratio_)*100
+#
+#plt.figure()
+#plt.plot(pca_cumsum)
+#plt.grid()
+#plt.ylabel('% Variance Explained')
+#plt.xlabel('# of Features')
+#plt.title('PCA Analysis')
+#plt.ylim(0,100.5)
+#plt.plot(range(2160),np.repeat(95,2160))
+#plt.legend(['Cumulative variance explained','95%'])
+#plt.show()
+#
+############################# PCA_ 655 components holds 95% of variance
+#pca = PCA(svd_solver='auto', n_components = 655)#PCA with all components
+#pca.fit(full_normalized_array)
+#full_normPCA_array = pca.transform(full_normalized_array)
+#
+############################# PCA_ 128 components holds 75% of variance
+#pca = PCA(svd_solver='auto', n_components = 128)#PCA with all components
+#pca.fit(full_normalized_array)
+#full_normPCA_array = pca.transform(full_normalized_array)
+#
+#
+############################# CREATE TEST AND TRAINING FOR THE MODELS
+##X_train, X_test, train_index, test_index = train_test_split(full_normPCA_array,range(np.size(full_isAnimal_array)),test_size=0.20)
+#
+#os.chdir('C:/Users/Ralle/Documents/GitHub/AdvancedMachineLearning/KNN_SVM_RNN_new_data')
+#
+##with open("train_indexes.txt", "wb") as fp:   #Pickling
+##    pickle.dump(train_index, fp)
+#
+##with open("test_indexes.txt", "wb") as fp:   #Pickling
+##    pickle.dump(test_index, fp)
+#
+#
+##To load:
+##with open("train_indexes.txt", "rb") as fp:   # Unpickling
+##    b = pickle.load(fp)
+#
+
+
+"""
+From classification with linear regression
+"""
+#####################################################################################
+##We use the image_sematics from each to train after
+n_observations =2160
+X_train, X_test, y_train_index, y_test_index = train_test_split(normal_data_pca[range(n_observations),:],range(n_observations),test_size=0.2) #The reason why y-labels are not sorte least to largest is because this funktion mix things arround in order to get a mo
+
+#feature_vector=np.zeros(2048,)
+
+
+#y_train_index=np.array(y_train_index)
+#y_train_index.astype(int)
 
 #
-#"""
-#-------------- TPOT does is magic-------------------------------------
-#"""
+#mean_err = np.zeros((1,1))
+#for i in range(1):   
+#    n_semantic_as_y = i #the 1st semantic is used as output
+#    clf=LinearRegression()
+#    clf.fit(X_train,full_semantics_matrix[y_train_index,n_semantic_as_y])
+#    
+#    predicted_out = clf.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
 #
-#from tpot import TPOTClassifier
-#clf=TPOTClassifier(verbosity=2,n_jobs=-1)
-#clf.fit(X_train,y_train)
-#
-#print('test score=',clf.score(X_test,y_test))
-#predictions = clf.predict(X_test)
-#print(confusion_matrix(y_test,predictions))
+#    ## calc error from test output
+#    err = predicted_out-full_semantics_matrix[y_test_index,n_semantic_as_y]
+#    mean_err[i] = np.mean(err)
+#    print(i)
 
+
+#clf1=LinearRegression()
+#clf1.fit(X_train,full_semantics_matrix[y_train_index])
+#predicted_out = clf1.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
+#err = predicted_out-full_semantics_matrix[y_test_index]
+#mean_err = np.mean(abs(err))
+#print('mean_err=',mean_err)
+#
+#
+#plt.figure()
+#plt.plot(mean_err)
+#plt.show()

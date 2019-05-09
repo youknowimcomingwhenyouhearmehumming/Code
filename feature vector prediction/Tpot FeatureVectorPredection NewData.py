@@ -23,16 +23,16 @@ def concat_channels(eeg_events):#channels*EEG_value*img
         concat_all[i] = concat_row
     return concat_all #[n_img*17600]
 
-
-def is_animal(class_vector):#creates vector of 1 if animal and 0 if not
-    n = np.size(class_vector)
-    bin_vector = np.zeros(n)
-    for i in range(n):
-        if class_vector[i] == 'animal':
-            bin_vector[i] = 1
-        else:
-            bin_vector[i] = 0
-    return bin_vector
+#
+#def is_animal(class_vector):#creates vector of 1 if animal and 0 if not
+#    n = np.size(class_vector)
+#    bin_vector = np.zeros(n)
+#    for i in range(n):
+#        if class_vector[i] == 'animal':
+#            bin_vector[i] = 1
+#        else:
+#            bin_vector[i] = 0
+#    return bin_vector
 
 
 
@@ -75,7 +75,7 @@ normal_data_all = preprocessing.scale(full_data_matrix)#normalize
 
 
 #Change superclass toAnimal or not:
-full_isAnimal_array = is_animal(full_superClass_array)
+#full_isAnimal_array = is_animal(full_superClass_array)
 
 
 """

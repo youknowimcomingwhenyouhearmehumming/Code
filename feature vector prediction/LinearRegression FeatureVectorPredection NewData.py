@@ -23,16 +23,16 @@ def concat_channels(eeg_events):#channels*EEG_value*img
         concat_all[i] = concat_row
     return concat_all #[n_img*17600]
 
-
-def is_animal(class_vector):#creates vector of 1 if animal and 0 if not
-    n = np.size(class_vector)
-    bin_vector = np.zeros(n)
-    for i in range(n):
-        if class_vector[i] == 'animal':
-            bin_vector[i] = 1
-        else:
-            bin_vector[i] = 0
-    return bin_vector
+#
+#def is_animal(class_vector):#creates vector of 1 if animal and 0 if not
+#    n = np.size(class_vector)
+#    bin_vector = np.zeros(n)
+#    for i in range(n):
+#        if class_vector[i] == 'animal':
+#            bin_vector[i] = 1
+#        else:
+#            bin_vector[i] = 0
+#    return bin_vector
 
 
 
@@ -75,7 +75,7 @@ normal_data_all = preprocessing.scale(full_data_matrix)#normalize
 
 
 #Change superclass toAnimal or not:
-full_isAnimal_array = is_animal(full_superClass_array)
+#full_isAnimal_array = is_animal(full_superClass_array)
 
 
 """
@@ -90,7 +90,7 @@ normal_data_pca = pca.transform(normal_data_all)#transform data to xx components
 #####################################################################################
 ##We use the image_sematics from each to train after
 n_observations =2160
-X_train, X_test, y_train_index, y_test_index = train_test_split(normal_data_pca[range(n_observations),:],range(n_observations),test_size=0.2)
+X_train, X_test, y_train_index, y_test_index = train_test_split(normal_data_pca[range(n_observations),:],range(n_observations),test_size=0.2) #The reason why y-labels are not sorte least to largest is because this funktion mix things arround in order to get a mo
 
 #feature_vector=np.zeros(2048,)
 
