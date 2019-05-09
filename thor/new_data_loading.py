@@ -41,7 +41,7 @@ def is_animal(class_vector):#creates vector of 1 if animal and 0 if not
 
 
 
-os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/new_data/data')
+os.chdir('C:/Users/Ralle/Desktop/Advanced Machine Learning Project/Mindreader folder/data')
 
 n_experiments = 4
 
