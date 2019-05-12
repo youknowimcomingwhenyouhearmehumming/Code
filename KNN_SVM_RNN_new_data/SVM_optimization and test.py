@@ -55,7 +55,7 @@ def svc_param_selection2(X, y, nfolds, Cs, gammas): #https://medium.com/@aneesha
     return grid_search.best_params_
 
 
-X = full_normPCA128_array[train_indicies]
+X = full_normPCA600_array[train_indicies]
 Y = full_isAnimal_array[train_indicies]
 
 print('first')
@@ -64,6 +64,7 @@ params1 = svc_param_selection(X, Y, 5)
 C1 = params1['C']
 gamma1 = params1['gamma']
 #{'C': 100.0, 'gamma': 1e-06}
+#for 600pca {'C': 100.0, 'gamma': 1e-05}
 
 print('second')
 #SECOND
@@ -75,6 +76,7 @@ params2 = svc_param_selection2(X, Y, 5, Cs, gammas)
 C2 = params2['C']
 gamma2 = params2['gamma']
 #{'C': 20.0, 'gamma': 2e-06}
+#{'C': 20.0, 'gamma': 2e-05} with 600 PCA
 
 print('third')
 #THIRD
@@ -86,6 +88,7 @@ params3 = svc_param_selection2(X, Y, 5, Cs, gammas)
 C3 = params3['C']
 gamma3 = params3['gamma']
 #{'C':4 , 'gamma': 8e-6}
+#{'C': 4.0, 'gamma': 1.6e-05} for 600pca
 
 print('fourth')
 #fourth
@@ -100,11 +103,11 @@ gamma4 = params3['gamma']
 
 
 ####################TO TEST
-svm_object = svm.SVC(C=4.0, gamma=8e-06,probability=True)
-svm_object.fit(full_normPCA123_array[train_indicies],full_isAnimal_array[train_indicies])
+svm_object = svm.SVC(C=4.0, gamma=1.6e-05,probability=True)
+svm_object.fit(full_normPCA600_array[train_indicies],full_isAnimal_array[train_indicies])
 
-svm_object.score(full_normPCA123_array[test_indicies],full_isAnimal_array[test_indicies])
-predictions = svm_object.predict(full_normPCA123_array[test_indicies])
+svm_object.score(full_normPCA600_array[test_indicies],full_isAnimal_array[test_indicies])
+predictions = svm_object.predict(full_normPCA600_array[test_indicies])
 #WHEN probability = True it uses Platt scaling to estimate posterior distributions. this may be bad
 
 
@@ -165,7 +168,7 @@ plt.show()
 ###############LETS DO ALL THE SAME WITH ALL SUBCLASSES:
 
 
-X = full_normPCA128_array[train_indicies]
+X = full_normPCA600_array[train_indicies]
 Y = full_subClass_array[train_indicies]
 
 
@@ -176,7 +179,7 @@ params1 = svc_param_selection(X, Y, 5)
 C1 = params1['C']
 gamma1 = params1['gamma']
 #{'C': 10.0, 'gamma': 1e-06}
-
+#{'C': 100.0, 'gamma': 1e-05} for 600
 print('second')
 #SECOND
 Cs = [0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8]
@@ -187,7 +190,7 @@ params2 = svc_param_selection2(X, Y, 5, Cs, gammas)
 C2 = params2['C']
 gamma2 = params2['gamma']
 #{'C': 4.0, 'gamma': 6e-06}
-
+#{'C': 20.0, 'gamma': 2e-05} for 600pca
 print('third')
 #THIRD
 Cs = [0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8]
@@ -198,6 +201,7 @@ params3 = svc_param_selection2(X, Y, 5, Cs, gammas)
 C3 = params3['C']
 gamma3 = params3['gamma']
 #{'C': 3.2, 'gamma': 6e-06}
+# {'C': 4.0, 'gamma': 1.2e-05} for 600pca
 
 print('fourth')
 #fourth
@@ -209,14 +213,14 @@ params4 = svc_param_selection2(X, Y, 5, Cs, gammas)
 C4 = params3['C']
 gamma4 = params3['gamma']
 #{'C': 3.2, 'gamma': 6e-06}
-
+#{'C': 3.2, 'gamma': 9.600000000000001e-06}#600pca
 
 ####################TO TEST
-svm_object = svm.SVC(C=3.2, gamma=6e-06)
-svm_object.fit(full_normPCA123_array[train_indicies],full_subClass_array[train_indicies])
+svm_object = svm.SVC(C=3.2, gamma=9.6e-06)
+svm_object.fit(full_normPCA600_array[train_indicies],full_subClass_array[train_indicies])
 
-svm_object.score(full_normPCA123_array[test_indicies],full_subClass_array[test_indicies])
-predictions = svm_object.predict(full_normPCA123_array[test_indicies])
+svm_object.score(full_normPCA600_array[test_indicies],full_subClass_array[test_indicies])
+predictions = svm_object.predict(full_normPCA600_array[test_indicies])
 
 corr = is_correct(predictions,full_subClass_array[test_indicies])
 N = np.size(full_subClass_array[test_indicies])
