@@ -19,6 +19,7 @@ from sklearn import metrics
 from sklearn.model_selection import cross_val_score
 from sklearn.decomposition import PCA
 from sklearn import preprocessing
+from skrvm import RVC
 
 #For the test of comparing KNN/SVM/RVM basic
 
@@ -46,9 +47,9 @@ full_normalized_array = preprocessing.scale(full_data_matrix)#normalize
 
 
 # Define parameters
-test_window_size = 32# number of dimentions to leave out at a time
+test_window_size = 144# number of dimentions to leave out at a time
 n_tests = int(np.floor(np.size(full_normalized_array[train_indicies,:],1)/test_window_size)) #make window size to match data size: must give an int
-plt.axis([0, np.size(full_data_matrix,1), 0, 1])
+plt.axis([0, np.size(full_data_matrix,1), 0.3, 0.6])
 all_scores = np.zeros((np.size(full_data_matrix,1)))
 for i in range(n_tests):
     #crop out dimentions
@@ -77,19 +78,25 @@ plt.show()
 
 
 
-os.chdir('C:/Users/Ralle/OneDrive/Dokumenter/GitHub/Code/rasmus')
-full_isAnimal_array = np.load('all_scores_32size_bins.npy')
+os.chdir('C:/Users/Ralle/Documents/GitHub/AdvancedMachineLearning/rasmus')
+all_scores = np.load('all_scores_144size_bins.npy')
 
 #####################################################
 ##Remove one bin at a time and test
 plt.figure()
-dims_to_del = np.zeros((n_tests,test_window_size))
+plt.axis([0,n_tests, 0.3, 0.6])
+plt.grid()
+dims_to_del = []
 all_del_scores = np.zeros((n_tests))
+data_to_test = full_normalized_array[train_indicies,:]
+scores_temp_array = all_scores
+
 for i in range(n_tests):
     #The highest scores is the least nessesary bins
-    dims_to_del[i,:] = np.where(all_scores == np.amax(all_scores))[0]
-    data_to_test = np.delete(full_normalized_array[train_indicies,:],dims_to_del[i,:],1)
-    
+    dims_to_del = np.concatenate((dims_to_del,np.where(scores_temp_array == np.amax(scores_temp_array))[0]))
+    data_to_test = np.delete(full_normalized_array[train_indicies,:],dims_to_del,1)
+    dims_to_del = dims_to_del.astype(int)
+    scores_temp_array[dims_to_del] = 0
 #DO PCA
     print('PCA')
     pca = PCA(svd_solver='auto', n_components = 123)#PCA with all components
@@ -100,7 +107,7 @@ for i in range(n_tests):
     print('scoring')
     scores = cross_val_score(svm_object, train_normPCA_array, full_subClass_array[train_indicies], cv=3)
     score = np.mean(scores)
-    all_del_scores[i*test_window_size:i*test_window_size+test_window_size] = [score]*test_window_size
+    all_del_scores[i] = score
     print('plotting')
     plt.scatter(i,score)  
     plt.pause(0.05)
@@ -114,16 +121,42 @@ plt.show()
 
 
 
+#
+#
+########################TRY PLOTTING WHICH DISSAPEARS
+#window_size=144;
+#n_test = 36864/window_size;
+#n_to_remove = int(n_test/4)###############WRONG THE WHOLE SECTION
+#dims_to_del = []
+#scores_temp_array = all_scores
+#
+#for i in range(n_to_remove):
+#    dims_to_del = np.concatenate((dims_to_del,np.where(scores_temp_array == np.amax(scores_temp_array))[0]))
+#    scores_temp_array = np.delete(all_scores,dims_to_del)
+#
+#removed = np.ones((36864))
+#dims_to_del=dims_to_del.astype(int)
+#removed[dims_to_del] = 0
+#
+#plt.figure()
+#for i in range(64):
+#    plt.subplot(64,1,i+1)
+#    plt.plot(removed[np.add(np.arange(576),i*576)])
+#    #plt.scatter(dims_to_del,np.ones(np.size(dims_to_del)),'red')
+#    ax = plt.gca()
+#    ax.yaxis.set_visible(False)
+#    
+    
+    
+    
+
+
+##COMBINE THE REMOVED BAD DATA WITH SOME maximum PCA
+raw_data_reduced_dim = np.delete(full_normalized_array[train_indicies,:],dims_to_del[0:36864/2],1)
+
+#DO PCA STUFF
 
 
 
 
-
-
-
-
-
-
-
-
-
+    
