@@ -87,15 +87,24 @@ normal_data_pca = pca.transform(normal_data_all)#transform data to xx components
 
 
 """
+Change the feature vector into a picture
+"""
+tt=full_semantics_matrix[1,:]
+sematic_as_matrix=np.reshape(full_semantics_matrix[1,:],(64,32))
+semantic_from_matirx_to_vector=np.reshape(sematic_as_matrix,2048) #since  sum(tt==semantic_from_matirx_to_vector)=2048 the reshape back and fourth is done in the right way
+
+os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt')
+import scipy.misc
+scipy.misc.imsave('semantics_as_jpg.jpg', sematic_as_matrix)
+
+
+"""
+Apllying the acttual pix2pix
+"""
+
+
+"""
 PCA stuff 2, detailed
-"""
-
-#import scipy.misc
-#scipy.misc.imsave('outfile.jpg', image_array)
-
-
-"""
-PCA stuff
 """
 
 #################PCA AND VARIANCE EXPLAINED

@@ -124,7 +124,7 @@ for i in range(len(y_test_string)):
 """
 
 from tpot import TPOTClassifier
-clf=TPOTClassifier(verbosity=2,n_jobs=-1)
+clf=TPOTClassifier(verbosity=2,n_jobs=1)
 clf.fit(X_train,y_train)
 
 print('test score=',clf.score(X_test,y_test))

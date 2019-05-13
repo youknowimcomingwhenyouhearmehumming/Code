@@ -63,9 +63,6 @@ For binary
 For all classes
 """
 
-
-
-
 X_train=Tsfresh_data[train_indicies]
 y_train_string=full_subClass_array[train_indicies]
 
@@ -112,7 +109,7 @@ for i in range(len(y_test_string)):
 """
 
 from tpot import TPOTClassifier
-clf=TPOTClassifier(verbosity=2,n_jobs=3, config_dict='TPOT light')
+clf=TPOTClassifier(verbosity=2,n_jobs=1)
 clf.fit(X_train,y_train)
 
 print('test score=',clf.score(X_test,y_test))
