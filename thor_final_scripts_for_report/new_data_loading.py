@@ -71,6 +71,82 @@ full_normalized_array = preprocessing.scale(full_data_matrix)#normalize
 
 
 
+
+def mean_over_channels(data,n_channels):
+    n_obs = np.size(data,0)
+    n_dim = np.size(data,1)
+    mean_channel = np.zeros((n_obs,int(n_dim/n_channels)))
+    for i in range(n_obs):
+        for j in range(n_channels):
+            mean_channel[i,:] += data[i,j:j+(int(n_dim/n_channels))]
+    return mean_channel
+
+
+
+def mean_over_classes(data,classes):
+    unique_classes = np.unique(classes)
+    n_classes = np.size(unique_classes)
+    n_obs = np.size(data,0)
+    n_dim = np.size(data,1)
+    mean_data = np.zeros((n_classes,n_dim))
+    count = np.zeros((n_classes))
+    for i in range(n_classes):
+        for j in range(n_obs):
+            if classes[j] == unique_classes[i]:
+                mean_data[i,:] += data[j,:]
+                count[i]+=1
+        mean_data[i,:] = mean_data[i,:]/count[i]
+    return mean_data
+
+
+plt.figure()
+plt.plot(full_data_matrix[0,:])
+plt.show()
+
+mean_channels = mean_over_channels(full_data_matrix,64)
+
+
+
+#########x_axis = np.multiply(np.arange(576),1.125)
+plt.figure()
+n_dim = 576
+n_channels = 64
+divider = 8 #only see every x'th channel
+for i in range(int(64/divider)):
+    i = i*divider
+    j = i*n_dim
+    mean_data = mean_over_classes(full_data_matrix[:,j:j+n_dim],full_subClass_array)
+    plt.subplot(int(64/divider),1,int(i/divider)+1)
+    plt.plot(mean_data[0,:])
+    plt.plot(mean_data[1,:])
+    plt.plot(mean_data[2,:])
+    plt.plot(mean_data[3,:])
+    plt.plot(mean_data[4,:])
+    plt.plot(mean_data[5,:])
+    ax = plt.gca()
+    ax.yaxis.set_visible(False)
+    ax.xaxis.set_visible(False)
+    if i == 0:
+        plt.title("Mean of classes for every " + str(divider) + "'th channel",fontsize=15)
+    #plt.ylabel("channel " + str(i),rotation=90)
+    #plt.legend(np.unique(full_subClass_array))
+ax.xaxis.set_visible(True)
+for i in ax.xaxis.get_major_ticks():
+    i.label.set_fontsize(12)
+    
+    
+plt.xlabel("Sample #",fontsize=15)
+plt.show()
+
+
+
+
+
+
+
+
+
+
 """
 PCA stuff
 """
