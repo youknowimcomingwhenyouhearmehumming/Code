@@ -99,7 +99,7 @@ y_test_string=full_subClass_array[y_test_index]
 
 
 """
-6 label
+Binary
 """
 y_train=np.zeros(len(y_train_string))
 y_test=np.ceil(np.zeros(len(y_test_string)))
@@ -108,29 +108,29 @@ for i in range(len(y_train_string)):
     if y_train_string[i]=='airplane':
         y_train[i]=1
     if y_train_string[i]=='elephant':
-        y_train[i]=2
+        y_train[i]=0
     if y_train_string[i]=='pizza':
-        y_train[i]=3
+        y_train[i]=1
     if y_train_string[i]=='sheep':
-        y_train[i]=4
+        y_train[i]=0
     if y_train_string[i]=='train':
-        y_train[i]=5
+        y_train[i]=1
     if y_train_string[i]=='zebra':
-        y_train[i]=6
+        y_train[i]=0
 
 for i in range(len(y_test_string)):
     if y_test_string[i]=='airplane':
         y_test[i]=1
     if y_test_string[i]=='elephant':
-        y_test[i]=2
+        y_test[i]=0
     if y_test_string[i]=='pizza':
-        y_test[i]=3
+        y_test[i]=1
     if y_test_string[i]=='sheep':
-        y_test[i]=4
+        y_test[i]=0
     if y_test_string[i]=='train':
-        y_test[i]=5
+        y_test[i]=1
     if y_test_string[i]=='zebra':
-        y_test[i]=6
+        y_test[i]=0
 
 
 
@@ -144,7 +144,7 @@ predictions = clf.predict(X_test)
 print(confusion_matrix(y_test,predictions))
 
 #os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/Code/thor_final_scripts_for_report')
-#clf.export('TPOT_EXPORT_autoML_newData_Tsfresh_binary.py')
+#clf.export('TPOT_EXPORT_autoML_newData_FULL_PCA_6_label.py')
 
 #error_rate=clf.score(X_test,y_test)
 #number_observations=len(X_test)
