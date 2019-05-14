@@ -96,20 +96,47 @@ plt.legend(['Cumulative variance explained','95%'])
 plt.show()
 
 
+os.chdir('C:/Users/Ralle/Documents/GitHub/AdvancedMachineLearning/tsfresh feature extraction from timeseries')
+tsfresh_exstracted_from_concatChanels = np.load('tsfresh_exstracted_from_concatChanels.npy')
+full_normalized_array = preprocessing.scale(tsfresh_exstracted_from_concatChanels)#normalize
 ############################ PCA_ 290 components holds 95% of variance
-pca = PCA(svd_solver='auto', n_components = 290)#PCA with all components
-pca.fit(full_normalized_array[train_indicies])
-full_normPCA_array = pca.transform(full_normalized_array)
+#pca = PCA(svd_solver='auto', n_components = 290)#PCA with all components
+#pca.fit(full_normalized_array[train_indicies])
+#full_normPCA_array = pca.transform(full_normalized_array)
 
 from sklearn import svm
 
-svm_object = svm.SVC(C=10, gamma=1e-03)
-svm_object.fit(extracted_features[train_indicies],full_isAnimal_array[train_indicies])
 
-print(svm_object.score(extracted_features[test_indicies],full_isAnimal_array[test_indicies]))
-predictions = svm_object.predict(extracted_features[test_indicies])
+def svc_param_selection2(X, y, nfolds, Cs, gammas): #https://medium.com/@aneesha/svm-parameter-tuning-in-scikit-learn-using-gridsearchcv-2413c02125a0
+    param_grid = {'C': Cs, 'gamma' : gammas}
+    grid_search = GridSearchCV(svm.SVC(kernel='rbf'), param_grid, cv=nfolds)
+    grid_search.fit(X, y)
+    grid_search.best_params_
+    return grid_search.best_params_
+
+Cs = [1e-2,1e-1,1e-0,1e+1,1e+2,1e+3,1e+4]
+gammas = [1e-8,1e-7,1e-6, 1e-5,1e-4,1e-3,1e-2]
+params = svc_param_selection2(full_normalized_array[train_indicies], full_subClass_array[train_indicies], 5, Cs, gammas)
+#first run {'C': 10.0, 'gamma': 0.0001}#subclasses
+# {'C': 10.0, 'gamma': 0.0001} binary
+Cs = [2,4,6,8,9,10,20,30,50,70,90]
+gammas = [2e-5,4e-5,6e-5,8e-5,9e-5, 1e-4,2e-4,3e-4,5e-4,7e-4,9e-4]
+params = svc_param_selection2(full_normalized_array[train_indicies], full_subClass_array[train_indicies], 5, Cs, gammas)
+#second run : {'C': 2, 'gamma': 0.0003} binary
+#{'C': 8, 'gamma': 6e-05}#sub
 
 
 
+
+
+svm_object = svm.SVC(C=8, gamma=6e-05)
+svm_object.fit(full_normalized_array[train_indicies],full_subClass_array[train_indicies])
+
+print(svm_object.score(full_normalized_array[test_indicies],full_subClass_array[test_indicies]))
+predictions = svm_object.predict(full_normalized_array[test_indicies])
+
+corr = is_correct(predictions,full_subClass_array[test_indicies])
+N = np.size(full_subClass_array[test_indicies])
+accuracy = np.sqrt(corr*(100-corr)/(100*N))
 
 
