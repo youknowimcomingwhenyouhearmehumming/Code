@@ -156,6 +156,12 @@ raw_data_reduced_dim = np.delete(full_normalized_array[train_indicies,:],dims_to
 
 #DO PCA STUFF
 
+#find SVM coeffs
+
+#test on the test set
+
+#BINGO MAX
+
 
 
 
