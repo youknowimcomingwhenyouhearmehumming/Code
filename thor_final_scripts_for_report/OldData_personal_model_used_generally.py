@@ -41,33 +41,33 @@ def concat_channels(eeg_events):#channels*EEG_value*img
 #            label_vector[i]=6      
 #    return label_vector      
 
-#def Label(class_vector):#creates vector of 1 if animal and 0 if not
-#    n = np.size(class_vector)
-#    bin_vector = np.zeros(n)
-#    for i in range(n):
-#        if class_vector[i] == 'animal':
-#            bin_vector[i] = 1
-#        else:
-#            bin_vector[i] = 0
-#    return bin_vector
-
 def Label(class_vector):#creates vector of 1 if animal and 0 if not
     n = np.size(class_vector)
     bin_vector = np.zeros(n)
     for i in range(n):
         if class_vector[i] == 'animal':
-            bin_vector[i] = 0
-        if class_vector[i] == 'food':
             bin_vector[i] = 1
-        if class_vector[i] == 'furniture':
-            bin_vector[i] = 2
-        if class_vector[i] == 'indoor':
-            bin_vector[i] = 3
-        if class_vector[i] == 'outdoor':
-            bin_vector[i] = 4
-        if class_vector[i] == 'vehicle':
-            bin_vector[i] = 5
+        else:
+            bin_vector[i] = 0
     return bin_vector
+
+#def Label(class_vector):#creates vector of 1 if animal and 0 if not
+#    n = np.size(class_vector)
+#    bin_vector = np.zeros(n)
+#    for i in range(n):
+#        if class_vector[i] == 'animal':
+#            bin_vector[i] = 0
+#        if class_vector[i] == 'food':
+#            bin_vector[i] = 1
+#        if class_vector[i] == 'furniture':
+#            bin_vector[i] = 2
+#        if class_vector[i] == 'indoor':
+#            bin_vector[i] = 3
+#        if class_vector[i] == 'outdoor':
+#            bin_vector[i] = 4
+#        if class_vector[i] == 'vehicle':
+#            bin_vector[i] = 5
+#    return bin_vector
 
 
 print('-------------------------------------PERSON 1-------------------------------------------------------')
@@ -88,10 +88,12 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=400#690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
+
+
 
 """
 -------------- X and y for train and test is made-------------------------------------
@@ -101,7 +103,7 @@ X_train = data_concat[X_train_index,:]
 X_test = data_concat[X_test_index,:]
 y_train = Label(y_train_string)
 y_test = Label(y_test_string)
-
+#
 
 """
 -------------- TPOT does is magic-------------------------------------
