@@ -834,3 +834,15 @@ confusion_matrix15=confusion_matrix(y_test,predictions)
 
 print('Order of which element that was the most of=',Counter(y_test_string).keys())
 print('How many that were of each unique element',Counter(y_test_string).values())
+
+
+
+
+
+#os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/Code/thor_final_scripts_for_report')
+#clf.export('TPOT_export_autoML_newData_Tsfresh_6_label.py.py')
+#error_rate=clf.score(X_test,y_test)
+#number_observations=len(X_test)
+#print('uncertanty=',np.sqrt((error_rate*(1-error_rate))/(number_observations)))
+#def f(error_rate,number_observations):
+#    return np.sqrt((error_rate*(1-error_rate))/(number_observations))
