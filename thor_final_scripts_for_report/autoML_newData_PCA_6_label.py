@@ -131,3 +131,15 @@ print('test score=',clf.score(X_test,y_test))
 predictions = clf.predict(X_test)
 print(confusion_matrix(y_test,predictions))
 
+
+
+
+os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/Code/thor_final_scripts_for_report')
+clf.export('TPOT_EXPORT_autoML_newData_PCA_6_label.py')
+
+error_rate=clf.score(X_test,y_test)
+number_observations=len(X_test)
+print('uncertanty=',np.sqrt((error_rate*(1-error_rate))/(number_observations)))
+
+def f(error_rate,number_observations):
+    return np.sqrt((error_rate*(1-error_rate))/(number_observations))
