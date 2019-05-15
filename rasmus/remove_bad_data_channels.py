@@ -101,7 +101,7 @@ plt.show()
 
 
 os.chdir('C:/Users/Ralle/Documents/GitHub/AdvancedMachineLearning/rasmus')
-all_scores = np.load('all_scores_576size_bins.npy')
+all_scores = np.load('all_scores_144size_bins.npy')
 
 #####################################################
 ##Remove one bin at a time and test
@@ -121,13 +121,19 @@ for i in range(n_tests):
     data_to_test = np.delete(full_normalized_array[train_indicies,:],dims_to_del,1)
     dims_to_del = dims_to_del.astype(int)
     scores_temp_array[dims_to_del] = 0
-#DO PCA 95%
+    #DO PCA
     print('PCA')
-    pca = PCA(svd_solver='auto', n_components = 123)#PCA with all components
+    pca = PCA(svd_solver='auto', n_components = 300)
     pca.fit(data_to_test)
     train_normPCA_array = pca.transform(data_to_test)
     
-    svm_object = svm.SVC(C=3.2, gamma=6e-06)
+    Cs = [1e-1,1e-0,1e+1,1e+2,1e+3]
+    gammas = [1e-7,1e-6, 1e-5,1e-4,1e-3]
+    params = svc_param_selection2(train_normPCA_array, full_subClass_array[train_indicies], 5, Cs, gammas)
+    C = params['C']
+    gamma = params['gamma']
+    
+    svm_object = svm.SVC(C=C, gamma=gamma)
     print('scoring')
     scores = cross_val_score(svm_object, train_normPCA_array, full_subClass_array[train_indicies], cv=cv)
     score = np.mean(scores)
@@ -307,14 +313,14 @@ Cs = [2,4,6,8,10,20,30,40,60,80]
 gammas = [2e-5,4e-5,6e-5,8e-5,1e-4,2e-4,3e-4,4e-4,6e-4,8e-4]
 params = svc_param_selection2(full_normPCA301_array_reduced_dim[train_indicies], full_isAnimal_array[train_indicies], 5, Cs, gammas)
 #second run : {'C': 6000.0, 'gamma': 8e-09} subclasses
-
+#{'C': 20, 'gamma': 4e-05} binary
 Cs = [2e+3, 4e+3, 6e+3, 8e+3, 1e+4,3e+4, 5e+4,1e+5,1e+6]
 gammas = [1e-9, 3e-9, 6e-9, 8e-9, 1e-8, 3e-8, 5e-8, 8e-8]
 params = svc_param_selection2(full_normPCA301_array_reduced_dim[train_indicies], full_isAnimal_array[train_indicies], 5, Cs, gammas)
 #second run : {'C': 6000.0, 'gamma': 8e-09} subclasses
 
 ####################TO TEST
-svm_object = svm.SVC(C=6000, gamma=8e-9)
+svm_object = svm.SVC(C=20, gamma=4e-5)
 svm_object.fit(full_normPCA301_array_reduced_dim[train_indicies],full_isAnimal_array[train_indicies])
 
 svm_object.score(full_normPCA301_array_reduced_dim[test_indicies],full_isAnimal_array[test_indicies])

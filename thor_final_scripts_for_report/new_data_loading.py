@@ -111,31 +111,35 @@ mean_channels = mean_over_channels(full_data_matrix,64)
 plt.figure()
 n_dim = 576
 n_channels = 64
-divider = 8 #only see every x'th channel
+divider = 10 #only see every x'th channel
 for i in range(int(64/divider)):
     i = i*divider
     j = i*n_dim
     mean_data = mean_over_classes(full_data_matrix[:,j:j+n_dim],full_subClass_array)
     plt.subplot(int(64/divider),1,int(i/divider)+1)
-    plt.plot(mean_data[0,:])
-    plt.plot(mean_data[1,:])
-    plt.plot(mean_data[2,:])
-    plt.plot(mean_data[3,:])
-    plt.plot(mean_data[4,:])
-    plt.plot(mean_data[5,:])
+    plt.plot(mean_data[0,:],linewidth=3)
+    plt.plot(mean_data[1,:],linewidth=3)
+    plt.plot(mean_data[2,:],linewidth=3)
+    plt.plot(mean_data[3,:],linewidth=3)
+    plt.plot(mean_data[4,:],linewidth=3)
+    plt.plot(mean_data[5,:],linewidth=3)
     ax = plt.gca()
     ax.yaxis.set_visible(False)
     ax.xaxis.set_visible(False)
     if i == 0:
-        plt.title("Mean of classes for every " + str(divider) + "'th channel",fontsize=15)
+        plt.title("Mean of classes for every " + str(divider) + "'th channel",fontsize=27)
+    if i == 3*divider:    
+        plt.legend(np.unique(full_subClass_array),loc=4,prop={'size': 25})
     #plt.ylabel("channel " + str(i),rotation=90)
     #plt.legend(np.unique(full_subClass_array))
+    
+                
 ax.xaxis.set_visible(True)
 for i in ax.xaxis.get_major_ticks():
-    i.label.set_fontsize(12)
+    i.label.set_fontsize(25)
     
     
-plt.xlabel("Sample #",fontsize=15)
+plt.xlabel("Sample #",size=27)
 plt.show()
 
 
