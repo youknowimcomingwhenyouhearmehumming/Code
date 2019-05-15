@@ -42,9 +42,6 @@ def is_correct(pred,y_test):# returns percent of correct predictions
     return percent_correct
 
 
-X = full_normPCA600_array[train_indicies]
-Y = full_isAnimal_array[train_indicies]
-
 #First we get load the splits indicies and data
 #To load:
 os.chdir('C:/Users/Ralle/OneDrive/Dokumenter/GitHub/Code/KNN_SVM_RNN_new_data')
@@ -62,6 +59,9 @@ full_subClass_array = np.load('full_subClass_array.npy')
 
 # full_data_matrix[train_indicies,:]
 
+
+X = full_normPCA600_array[train_indicies]
+Y = full_isAnimal_array[train_indicies]
 
 
 full_normalized_array = preprocessing.scale(full_data_matrix)#normalize
@@ -100,9 +100,10 @@ plt.show()
 
 
 
-os.chdir('C:/Users/Ralle/Documents/GitHub/AdvancedMachineLearning/rasmus')
+os.chdir('C:/Users/Ralle/OneDrive/Dokumenter/GitHub/Code/rasmus')
 all_scores = np.load('all_scores_144size_bins.npy')
-
+test_window_size = 144
+n_tests = 64*4
 #####################################################
 ##Remove one bin at a time and test
 cv = StratifiedShuffleSplit(5,test_size = 1/5,random_state=0)
@@ -123,7 +124,7 @@ for i in range(n_tests):
     scores_temp_array[dims_to_del] = 0
     #DO PCA
     print('PCA')
-    pca = PCA(svd_solver='auto', n_components = 300)
+    pca = PCA(svd_solver='auto', n_components = 200)
     pca.fit(data_to_test)
     train_normPCA_array = pca.transform(data_to_test)
     
@@ -132,7 +133,8 @@ for i in range(n_tests):
     params = svc_param_selection2(train_normPCA_array, full_subClass_array[train_indicies], 5, Cs, gammas)
     C = params['C']
     gamma = params['gamma']
-    
+    print(C)
+    print(gamma)
     svm_object = svm.SVC(C=C, gamma=gamma)
     print('scoring')
     scores = cross_val_score(svm_object, train_normPCA_array, full_subClass_array[train_indicies], cv=cv)
@@ -252,16 +254,20 @@ accuracy = np.sqrt(corr*(100-corr)/(100*N))
 
 
 dims_to_keep = []
-chan_numbers = np.concatenate((np.add(np.arange(12),20),(np.add(np.arange(8),57))))
-for i in range(np.size(chan_numbers)):
-    dims_to_keep = np.concatenate((dims_to_keep,np.add((chan_numbers[i]-1)*576,np.arange(576))))
+#chan_numbers = np.concatenate((np.add(np.arange(12),20),(np.add(np.arange(8),57))))
 
+#for i in range(np.size(chan_numbers)):
+#    dims_to_keep = np.concatenate((dims_to_keep,np.add((chan_numbers[i]-1)*576,np.arange(576))))
+
+
+chan_numbers = np.delete(np.arange(36736),dims_to_del[0:128*144])
+dims_to_keep = chan_numbers
 #######################TRY PLOTTING WHICH DISSAPEARS
 
 plt.figure()
 for i in range(64):
     plt.subplot(64,1,i+1)
-    x = dims_to_remove_phys[((dims_to_keep < (i*576+576)) & (dims_to_keep >= (i*576)))]
+    x = dims_to_keep[((dims_to_keep < (i*576+576)) & (dims_to_keep >= (i*576)))]
     plt.scatter(np.mod(x,576),np.ones(np.size(x)))
     ax = plt.gca()
     ax.yaxis.set_visible(False)
@@ -269,6 +275,11 @@ for i in range(64):
 
 dims_to_keep = dims_to_keep.astype(int)
 data_reduced = full_normalized_array[:,dims_to_keep]
+
+
+
+
+
 
 
 ################PCA AND VARIANCE EXPLAINED
@@ -288,9 +299,25 @@ plt.ylim(0,100.5)
 plt.show()
 
 ############################ PCA_ 301 components holds 95% of variance using train set as base
-pca = PCA(svd_solver='auto', n_components = 301)#PCA with all components
+pca = PCA(svd_solver='auto', n_components = 800)#PCA with all components
 pca.fit(data_reduced[train_indicies])
-full_normPCA301_array_reduced_dim = pca.transform(data_reduced)
+full_normPCA800_array_reduced_dim = pca.transform(data_reduced)
+
+
+Cs = [1e-2,1e-1,1e-0,1e+1,1e+2,1e+3,1e+4]
+gammas = [1e-8,1e-7,1e-6, 1e-5,1e-4,1e-3,1e-2]
+params = svc_param_selection2(full_normPCA800_array_reduced_dim[train_indicies], full_subClass_array[train_indicies], 5, Cs, gammas)
+
+svm_object = svm.SVC(C=10, gamma=1e-4, kernel='rbf')
+svm_object.fit(full_normPCA800_array_reduced_dim[train_indicies],full_subClass_array[train_indicies])
+
+svm_object.score(full_normPCA800_array_reduced_dim[test_indicies],full_subClass_array[test_indicies])
+predictions = svm_object.predict(full_normPCA800_array_reduced_dim[test_indicies])
+
+corr = is_correct(predictions,full_subClass_array[test_indicies])
+N = np.size(full_subClass_array[test_indicies])
+accuracy = np.sqrt(corr*(100-corr)/(100*N))
+
 
 
 
