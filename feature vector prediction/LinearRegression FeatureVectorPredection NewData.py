@@ -60,12 +60,14 @@ for i in range(n_experiments):
         full_data_matrix = concat_data
         full_superClass_array = image_order[:,0]
         full_subClass_array = image_order[:,1]
+        image_ID= image_order[:,2]
         full_semantics_matrix = np.transpose(image_semantics)
 
     else:
         full_data_matrix  = np.concatenate((full_data_matrix,concat_data),axis=0)
         full_superClass_array  = np.concatenate((full_superClass_array,image_order[:,0]),axis=0)
         full_subClass_array  = np.concatenate((full_subClass_array,image_order[:,1]),axis=0)
+        image_ID  = np.concatenate((image_ID,image_order[:,2]),axis=0)
         full_semantics_matrix = np.concatenate((full_semantics_matrix,np.transpose(image_semantics)))
         
 #Normalize data
@@ -81,7 +83,7 @@ normal_data_all = preprocessing.scale(full_data_matrix)#normalize
 """
 PCA stuff method 1
 """
-pca = PCA(10, svd_solver='auto')
+pca = PCA(2160, svd_solver='auto')
 pca.fit(normal_data_all)
 normal_data_pca = pca.transform(normal_data_all)#transform data to xx components
 
@@ -115,8 +117,8 @@ X_train, X_test, y_train_index, y_test_index = train_test_split(normal_data_pca[
 
 clf1=LinearRegression()
 clf1.fit(X_train,full_semantics_matrix[y_train_index])
-predicted_out = clf1.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
-err = predicted_out-full_semantics_matrix[y_test_index]
+predicted_feature_vector = clf1.predict(X_test) #full_semantics_matrix[y_test_index,n_semantic_as_y]
+err = predicted_feature_vector-full_semantics_matrix[y_test_index]
 mean_err = np.mean(abs(err))
 print('mean_err=',mean_err)
 
@@ -124,3 +126,27 @@ print('mean_err=',mean_err)
 plt.figure()
 plt.plot(mean_err)
 plt.show()
+
+
+
+#a = {image_ID[y_test_index]: predicted_feature_vector}
+
+#Dictonary= [image_ID[y_test_index],[predicted_feature_vector]]
+##Dictonary = (dict)(image_ID[y_test_index], predicted_feature_vector)
+#Dictonary = (dict)(Dictonary)
+#
+#Dictonary = {tuple(image_ID[y_test_index].tolist()): tuple(predicted_feature_vector.tolist())}
+#import pickle
+#os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/new_data/captioning_code/data')
+#with open('result.pckl', 'wb') as handle:
+#    pickle.dump(Dictonary, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+Dictonary=dict(zip(image_ID[y_test_index],predicted_feature_vector))
+
+
+#Dictonary=dict(zip(image_ID[y_test_index],full_semantics_matrix[y_test_index]))
+os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/new_data/captioning_code/data')
+
+f=open('result.pckl','wb')
+pickle.dump(Dictonary,f)
+f.close()

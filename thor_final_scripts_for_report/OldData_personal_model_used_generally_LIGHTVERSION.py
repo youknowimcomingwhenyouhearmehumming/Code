@@ -88,7 +88,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=400#690 is all of them
+number_of_principle_components=20#690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -109,7 +109,7 @@ y_test = Label(y_test_string)
 -------------- TPOT does is magic-------------------------------------
 #"""
 from tpot import TPOTClassifier
-clf=TPOTClassifier(verbosity=2,n_jobs=1) 
+clf=TPOTClassifier(verbosity=2,n_jobs=-1,config_dict='TPOT light') 
 clf.fit(X_train,y_train)
 
 print(clf.score(X_test,y_test))
@@ -140,7 +140,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -190,7 +190,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -240,7 +240,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -291,7 +291,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -343,7 +343,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -393,7 +393,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -443,7 +443,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -495,7 +495,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -548,7 +548,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -601,7 +601,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -654,7 +654,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -706,7 +706,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -757,7 +757,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -809,7 +809,7 @@ data_concat_normal = preprocessing.scale(data_concat)#normalize
 """
 -------------- PCA is applied to the data-------------------------------------
 """
-number_of_principle_components=690 #690 is all of them
+number_of_principle_components=20 #690 is all of them
 pca=PCA(n_components=number_of_principle_components)
 pca_data=pca.fit_transform(data_concat_normal)
 print(np.sum(pca.explained_variance_ratio_)) # if 690 is chosen then this should be 1.0
@@ -842,7 +842,7 @@ print('How many that were of each unique element',Counter(y_test_string).values(
 
 
 os.chdir('C:/Users/Bruger/Documents/Uni/Advanche machine learning/Projekt/Code/thor_final_scripts_for_report')
-clf.export('TPOT_export_OldData_personal_model_used_generally_PCA100procentaka690.py')
+clf.export('TPOT_export_OldData_personal_model_used_generally_PCA20components.py')
 error_rate=clf.score(X_test,y_test)
 number_observations=len(X_test)
 print('uncertanty=',np.sqrt((error_rate*(1-error_rate))/(number_observations)))
