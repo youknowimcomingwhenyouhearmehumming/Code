@@ -9,9 +9,10 @@ from __future__ import print_function
 #import mne
 import numpy as np
 import scipy.io as sio
+import scipy
 import sklearn as sk
 import matplotlib.pyplot as plt
-
+import math
 from sklearn.model_selection import train_test_split
 
 
@@ -45,7 +46,8 @@ def concat_channels(eeg_events):#channels*EEG_value*img
     return concat_all #[n_img*17600]
 
 
-os.chdir(r"C:\Users\JAlbe\Desktop\Mindreaderfolder\data")
+#os.chdir(r"C:\Users\JAlbe\Desktop\Mindreaderfolder\data")
+os.chdir(r"C:\Users\JAlbe\Desktop\Mindreaders\Mindreaderfolder")
 
 n_experiments = 4
 
@@ -56,12 +58,17 @@ full_subClass_array = []
 full_semantics_matrix = []
 
 for i in range(n_experiments):
-    eeg_events = scipy.io.loadmat('exp' + str(i+1) + '\eeg_events.mat')
-    image_order = np.genfromtxt('exp' + str(i+1) + '\image_order.txt', delimiter="\t", skip_header = True, dtype=(str))#
+    sub = 'data\exp'+str(i+1)+'\eeg_events.mat'
+    sem = 'data\exp'+str(i+1)+'\image_semantics.mat'
+    img_order = 'data\exp'+str(i+1)+'\image_order.txt'
+    
+    
+    eeg_events = scipy.io.loadmat(sub)
+    image_order = np.genfromtxt(img_order, delimiter="\t", skip_header = True, dtype=(str))#
     data = eeg_events["eeg_events"]
     concat_data = concat_channels(data)
     #load sematics
-    image_semantics_mat = scipy.io.loadmat('exp' + str(i+1) + '\image_semantics.mat')
+    image_semantics_mat = scipy.io.loadmat(sem)
     image_semantics = image_semantics_mat["image_semantics"]#semantics_vector x n_images
     
     if i == 0:
@@ -85,7 +92,7 @@ pca.fit(normal_data_all)
 normal_data_pca = pca.transform(normal_data_all)
 
 batch_size = 256
-epochs = 50
+epochs = 100
 num_classes = 6
 
 
@@ -130,6 +137,34 @@ for i in range(len(y_test_string)):
         y_test[i]=5
     if y_test_string[i]=='zebra':
         y_test[i]=0
+
+#for i in range(len(y_train_string)):
+#    if y_train_string[i]=='airplane':
+#        y_train[i]=0
+#    if y_train_string[i]=='elephant':
+#        y_train[i]=0
+#    if y_train_string[i]=='pizza':
+#        y_train[i]=1
+#    if y_train_string[i]=='sheep':
+#        y_train[i]=0
+#    if y_train_string[i]=='train':
+#        y_train[i]=0
+#    if y_train_string[i]=='zebra':
+#        y_train[i]=0
+#
+#for i in range(len(y_test_string)):
+#    if y_test_string[i]=='airplane':
+#        y_test[i]=0
+#    if y_test_string[i]=='elephant':
+#        y_test[i]=0
+#    if y_test_string[i]=='pizza':
+#        y_test[i]=1
+#    if y_test_string[i]=='sheep':
+#        y_test[i]=0
+#    if y_test_string[i]=='train':
+#        y_test[i]=0
+#    if y_test_string[i]=='zebra':
+#        y_test[i]=0
 
 
 # the data, shuffled and split between train and test sets
@@ -201,3 +236,11 @@ plt.show()
 
 model.save('CNNWorkingModel.h5')
 model.save_weights('CNNWorkingModelWeights.h5')
+
+import math
+#error_rate= (float(score[1]))
+error_rate = 0.73
+#num_obs = (float(x_test.size[0]))
+num_obs = 2160
+uncert = math.sqrt((error_rate*(1-error_rate))/(num_obs))
+
